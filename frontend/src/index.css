@@ -52,6 +52,7 @@
   /* Sidebar */
   .sidebar {
     @apply h-screen w-72 fixed left-0 top-0 z-50 bg-[#f0f4f7] flex flex-col py-10 px-6 space-y-8;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .sidebar-link {
@@ -60,6 +61,16 @@
 
   .sidebar-link-active {
     @apply flex items-center space-x-3 bg-white text-[#0053db] rounded-lg shadow-[0_12px_32px_rgba(42,52,57,0.06)] px-4 py-3 transition-all cursor-pointer;
+  }
+
+  /* Sidebar mobile overlay */
+  .sidebar-overlay {
+    @apply fixed inset-0 z-40 bg-black/40 backdrop-blur-sm;
+    display: none;
+  }
+
+  .sidebar-overlay.active {
+    display: block;
   }
 
   /* Cards */
@@ -130,13 +141,19 @@
 
   /* Topbar */
   .topbar {
-    @apply fixed top-0 right-0 z-40 h-20 bg-[#f7f9fb]/80 backdrop-blur-[20px] shadow-[0_12px_32px_rgba(42,52,57,0.06)] flex justify-between items-center px-12;
-    width: calc(100% - var(--sidebar-width));
+    @apply fixed top-0 right-0 z-40 h-16 md:h-20 bg-[#f7f9fb]/80 backdrop-blur-[20px] shadow-[0_12px_32px_rgba(42,52,57,0.06)] flex justify-between items-center px-4 md:px-12;
+    width: 100%;
   }
 
   /* Main content area */
   .main-content {
-    margin-left: var(--sidebar-width);
+    margin-left: 0;
+    padding-top: 4rem;
+  }
+
+  /* Hamburger button */
+  .hamburger-btn {
+    @apply flex items-center justify-center w-10 h-10 rounded-xl hover:bg-surface-container transition-colors cursor-pointer;
   }
 
   /* Text gradient */
@@ -207,5 +224,55 @@
   @keyframes slideIn {
     from { opacity: 0; transform: translateX(-8px); }
     to { opacity: 1; transform: translateX(0); }
+  }
+}
+
+/* ============================================================
+   Responsive Layout
+   ============================================================ */
+
+/* Mobile: sidebar hidden by default, slides in */
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 4rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .topbar {
+    width: 100% !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
+
+/* Desktop: always show sidebar, content offset */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-overlay {
+    display: none !important;
+  }
+
+  .topbar {
+    width: calc(100% - var(--sidebar-width)) !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+
+  .main-content {
+    margin-left: var(--sidebar-width) !important;
+    padding-top: 5rem;
   }
 }

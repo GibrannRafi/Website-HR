@@ -4,19 +4,15 @@ import { useAuth } from '../../context/AuthContext';
 
 const navItems = [
   { icon: 'dashboard', label: 'Dashboard', to: '/dashboard' },
-  // { icon: 'group', label: 'Directory', to: '/directory' },
-  // { icon: 'payments', label: 'Payroll', to: '/payroll' },
-  // { icon: 'monitoring', label: 'Analytics', to: '/analytics' },
   { icon: 'person_add', label: 'Recruitment', to: '/recruitment' },
 ];
 
 const bottomItems = [
-  // { icon: 'help', label: 'Support', to: '/support' },
   { icon: 'settings', label: 'Settings', to: '/settings' },
 ];
 
-export default function Sidebar() {
-  const { user, logout } = useAuth();
+export default function Sidebar({ isOpen, onClose }) {
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -24,19 +20,31 @@ export default function Sidebar() {
     navigate('/login');
   };
 
+  const handleLinkClick = () => {
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className="sidebar">
-      {/* Brand */}
-      <div className="flex items-center space-x-3 mb-4">
-        <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl shadow-lg flex-shrink-0">
-          <span className="material-symbols-outlined text-white text-[20px]">token</span>
+    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
+      {/* Brand & Close button on mobile */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-primary flex items-center justify-center rounded-xl shadow-lg flex-shrink-0">
+            <span className="material-symbols-outlined text-white text-[20px]">token</span>
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tighter text-[#2a3439]">Portal HR</h1>
+            <p className="uppercase tracking-[0.05em] text-[10px] font-semibold text-secondary">
+              Premium Management
+            </p>
+          </div>
         </div>
-        <div>
-          <h1 className="text-xl font-bold tracking-tighter text-[#2a3439]">Portal HR</h1>
-          <p className="uppercase tracking-[0.05em] text-[10px] font-semibold text-secondary">
-            Premium Management
-          </p>
-        </div>
+        <button
+          onClick={onClose}
+          className="md:hidden p-1 rounded-lg hover:bg-black/5 text-[#566166]"
+        >
+          <span className="material-symbols-outlined text-[24px]">close</span>
+        </button>
       </div>
 
       {/* Main Nav */}
@@ -45,6 +53,7 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={handleLinkClick}
             className={({ isActive }) =>
               isActive ? 'sidebar-link-active' : 'sidebar-link'
             }
@@ -61,6 +70,7 @@ export default function Sidebar() {
           <NavLink
             key={item.to}
             to={item.to}
+            onClick={handleLinkClick}
             className="sidebar-link"
           >
             <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
@@ -68,9 +78,11 @@ export default function Sidebar() {
           </NavLink>
         ))}
 
-        {/* User info + logout */}
         <button
-          onClick={handleLogout}
+          onClick={() => {
+            handleLinkClick();
+            handleLogout();
+          }}
           className="sidebar-link w-full text-left mt-2"
           title="Logout"
         >
