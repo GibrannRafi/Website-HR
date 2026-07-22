@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Register | Atelier HR</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#565e74",
+                        "outline-variant": "#b3b1b4",
+                        "secondary-container": "#e2e2e9",
+                        "primary-fixed-dim": "#ccd4ee",
+                        "primary-fixed": "#dae2fd",
+                        "on-tertiary-fixed-variant": "#5b5672",
+                        "on-primary-container": "#4a5167",
+                        "surface-container-low": "#f6f3f4",
+                        "on-error": "#fff7f6",
+                        "inverse-on-surface": "#9e9c9d",
+                        "on-background": "#323235",
+                        "surface-dim": "#dbd9dd",
+                        "surface-bright": "#fcf8f9",
+                        "tertiary-container": "#e3dbfd",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#fcf8f9",
+                        "surface-variant": "#e4e2e5",
+                        "surface-container": "#f0edef",
+                        "surface-container-high": "#eae7ea",
+                        "error-dim": "#4e0309",
+                        "inverse-primary": "#dae2fd",
+                        "tertiary": "#605c78",
+                        "on-primary": "#f7f7ff",
+                        "error": "#9f403d",
+                        "on-tertiary": "#fcf7ff",
+                        "secondary": "#5e5f65",
+                        "on-primary-fixed-variant": "#535b71",
+                        "on-tertiary-container": "#514d68",
+                        "primary-container": "#dae2fd",
+                        "on-primary-fixed": "#373f54",
+                        "secondary-fixed-dim": "#d4d4db",
+                        "primary-dim": "#4a5268",
+                        "secondary-fixed": "#e2e2e9",
+                        "on-tertiary-fixed": "#3e3a54",
+                        "tertiary-fixed": "#e3dbfd",
+                        "primary": "#565e74",
+                        "on-surface-variant": "#5f5f61",
+                        "on-error-container": "#752121",
+                        "on-secondary-fixed-variant": "#5a5b61",
+                        "inverse-surface": "#0e0e0f",
+                        "surface-container-highest": "#e4e2e5",
+                        "error-container": "#fe8983",
+                        "secondary-dim": "#525359",
+                        "on-surface": "#323235",
+                        "on-secondary-fixed": "#3e3f45",
+                        "tertiary-dim": "#54506b",
+                        "background": "#fcf8f9",
+                        "outline": "#7b7a7d",
+                        "on-secondary": "#f9f8ff",
+                        "tertiary-fixed-dim": "#d4cdee",
+                        "on-secondary-container": "#505157"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .at-ghost-input:focus {
+            background-color: #f0edef;
+            outline: none;
+        }
+
+        .at-glass-bg {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(252, 248, 249, 0.8) 100%);
+            backdrop-filter: blur(20px);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-surface text-on-surface min-h-screen selection:bg-primary-container selection:text-on-primary-container">
+    <!-- Top Navigation Placeholder (Simplified for focused task) -->
+    <header class="fixed top-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-transparent">
+        <div class="text-lg font-bold tracking-tighter text-on-background">Atelier HR</div>
+        <div class="flex gap-6 items-center">
+            <span
+                class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">help_outline</span>
+            <span
+                class="material-symbols-outlined text-outline cursor-pointer hover:text-primary transition-colors">language</span>
+        </div>
+    </header>
+    <main class="min-h-screen flex items-center justify-center p-6 relative overflow-hidden">
+        <!-- Abstract Decorative Elements for 'Atelier' feel -->
+        <div
+            class="absolute top-[-10%] right-[-5%] w-[40rem] h-[40rem] bg-primary-container/20 rounded-full blur-[120px] pointer-events-none">
+        </div>
+        <div
+            class="absolute bottom-[-10%] left-[-5%] w-[30rem] h-[30rem] bg-tertiary-container/20 rounded-full blur-[100px] pointer-events-none">
+        </div>
+        <section
+            class="w-full max-w-[1100px] grid md:grid-cols-12 gap-0 bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(15,23,42,0.04)] overflow-hidden relative z-10">
+            <!-- Branding/Visual Side (Asymmetric Layout) -->
+            <div
+                class="hidden md:flex md:col-span-5 bg-surface-container-low p-12 flex-col justify-between relative overflow-hidden">
+                <div class="relative z-10">
+                    <h1 class="text-4xl font-extrabold tracking-tighter leading-tight text-on-surface mb-6">
+                        Design the future of your workforce.
+                    </h1>
+                    <p class="text-on-surface-variant font-medium leading-relaxed max-w-xs">
+                        A workspace built for precision, clarity, and intentional management.
+                    </p>
+                </div>
+                <div class="mt-12 relative z-10">
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center">
+                            <span class="material-symbols-outlined text-on-primary-container"
+                                style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-on-surface">Precision Metrics</p>
+                            <p class="text-xs text-on-surface-variant">Real-time data visualization</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="absolute bottom-0 right-0 w-full h-1/2 opacity-10 pointer-events-none">
+                    <img class="w-full h-full object-cover"
+                        data-alt="minimalist architectural details with clean lines and soft shadows on white concrete surfaces"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZUujCgidZl2Jl-2bV-08hei-yBH5X1IAoibI2MT7ftI_UyPAAwIdA1jPRA1gEA8Ct2z1X6KvuUmyl9FGPhhM0ehzbFptFip7QmJXM4LV78L1dwZcC8xBQqZetANWD4aqIJ3cS-4pn5if9WEFZlXYjqY04TtBaMsQ64kl_g3tpHinjvwJmfwsCrKLa_G8kyfVTXuYem6IQmcmHlMwMzCKr_fh8jDsbkfM4t6Hz5XhIjMagMTToSn4V-yjD7HQBr1HeM6PSY_OaHZ4" />
+                </div>
+            </div>
+            <!-- Form Side -->
+            <div class="col-span-12 md:col-span-7 p-8 md:p-16 lg:p-20">
+                <div class="max-w-md mx-auto">
+                    <div class="mb-12">
+                        <h2 class="text-2xl font-bold tracking-tight text-on-surface mb-2">Create Account</h2>
+                        <p class="text-on-surface-variant text-sm">Join the Digital Atelier and start managing with
+                            precision.</p>
+                    </div>
+                    <form class="space-y-8">
+                        <div class="space-y-1 group">
+                            <label
+                                class="block text-[11px] font-bold tracking-[0.05em] uppercase text-outline transition-colors group-focus-within:text-primary"
+                                for="fullname">Full Name</label>
+                            <input
+                                class="w-full bg-surface-container-high/30 border-0 border-b border-transparent focus:border-primary-dim focus:ring-0 px-0 py-3 text-on-surface placeholder:text-outline-variant transition-all at-ghost-input"
+                                id="fullname" placeholder="Julianne Smith" type="text" />
+                        </div>
+                        <div class="space-y-1 group">
+                            <label
+                                class="block text-[11px] font-bold tracking-[0.05em] uppercase text-outline transition-colors group-focus-within:text-primary"
+                                for="email">Work Email</label>
+                            <input
+                                class="w-full bg-surface-container-high/30 border-0 border-b border-transparent focus:border-primary-dim focus:ring-0 px-0 py-3 text-on-surface placeholder:text-outline-variant transition-all at-ghost-input"
+                                id="email" placeholder="julianne@company.com" type="email" />
+                        </div>
+                        <div class="space-y-1 group">
+                            <label
+                                class="block text-[11px] font-bold tracking-[0.05em] uppercase text-outline transition-colors group-focus-within:text-primary"
+                                for="company">Company Name</label>
+                            <input
+                                class="w-full bg-surface-container-high/30 border-0 border-b border-transparent focus:border-primary-dim focus:ring-0 px-0 py-3 text-on-surface placeholder:text-outline-variant transition-all at-ghost-input"
+                                id="company" placeholder="Digital Atelier Ltd." type="text" />
+                        </div>
+                        <div class="space-y-1 group">
+                            <label
+                                class="block text-[11px] font-bold tracking-[0.05em] uppercase text-outline transition-colors group-focus-within:text-primary"
+                                for="password">Password</label>
+                            <input
+                                class="w-full bg-surface-container-high/30 border-0 border-b border-transparent focus:border-primary-dim focus:ring-0 px-0 py-3 text-on-surface placeholder:text-outline-variant transition-all at-ghost-input"
+                                id="password" placeholder="••••••••" type="password" />
+                        </div>
+                        <div class="pt-6">
+                            <button
+                                class="w-full bg-primary hover:bg-primary-dim text-on-primary font-semibold py-4 px-6 rounded-md transition-all duration-300 shadow-sm active:scale-[0.99] flex items-center justify-center gap-2"
+                                type="submit">
+                                <span>Create Account</span>
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-12 text-center">
+                        <p class="text-sm text-on-surface-variant">
+                            Already have an account?
+                            <a class="text-primary font-bold ml-1 hover:underline underline-offset-4 decoration-primary/20"
+                                href="#">Login</a>
+                        </p>
+                    </div>
+                    <div class="mt-16 flex items-center justify-center gap-8 opacity-40">
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Privacy</span>
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Terms</span>
+                        <span class="text-[10px] font-bold tracking-widest uppercase">Cookies</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Success Feedback Overlay (Hidden state) -->
+    <div class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 at-glass-bg"
+        id="registration-overlay">
+        <div class="max-w-md w-full text-center p-12">
+            <span class="material-symbols-outlined text-6xl text-primary mb-8"
+                style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <h3 class="text-3xl font-bold tracking-tight text-on-surface mb-4">Welcome to Atelier.</h3>
+            <p class="text-on-surface-variant mb-12 leading-relaxed">Your professional sanctuary is being prepared.
+                Check your email to verify your organization's workspace.</p>
+            <button
+                class="bg-surface-container-highest text-on-surface font-bold py-4 px-10 rounded-md hover:bg-surface-variant transition-colors">
+                Go to Workspace
+            </button>
+        </div>
+    </div>
+</body>
+
+</html>

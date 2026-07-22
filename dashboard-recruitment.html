@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Jobdesk Management | Atelier HR</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-secondary-fixed": "#3e3f45",
+                        "surface-container": "#f0edef",
+                        "secondary-fixed": "#e2e2e9",
+                        "tertiary-container": "#e3dbfd",
+                        "error-container": "#fe8983",
+                        "on-secondary": "#f9f8ff",
+                        "surface": "#fcf8f9",
+                        "surface-container-highest": "#e4e2e5",
+                        "secondary-fixed-dim": "#d4d4db",
+                        "on-error": "#fff7f6",
+                        "primary-fixed-dim": "#ccd4ee",
+                        "on-tertiary": "#fcf7ff",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#9e9c9d",
+                        "secondary": "#5e5f65",
+                        "primary-dim": "#4a5268",
+                        "on-tertiary-fixed-variant": "#5b5672",
+                        "outline": "#7b7a7d",
+                        "surface-dim": "#dbd9dd",
+                        "on-tertiary-container": "#514d68",
+                        "outline-variant": "#b3b1b4",
+                        "background": "#fcf8f9",
+                        "on-tertiary-fixed": "#3e3a54",
+                        "tertiary": "#605c78",
+                        "on-secondary-container": "#505157",
+                        "on-primary-fixed-variant": "#535b71",
+                        "surface-variant": "#e4e2e5",
+                        "primary-container": "#dae2fd",
+                        "tertiary-dim": "#54506b",
+                        "tertiary-fixed-dim": "#d4cdee",
+                        "secondary-container": "#e2e2e9",
+                        "secondary-dim": "#525359",
+                        "tertiary-fixed": "#e3dbfd",
+                        "surface-container-low": "#f6f3f4",
+                        "on-secondary-fixed-variant": "#5a5b61",
+                        "on-background": "#323235",
+                        "on-primary-container": "#4a5167",
+                        "error-dim": "#4e0309",
+                        "on-surface-variant": "#5f5f61",
+                        "primary-fixed": "#dae2fd",
+                        "surface-tint": "#565e74",
+                        "error": "#9f403d",
+                        "inverse-primary": "#dae2fd",
+                        "on-primary-fixed": "#373f54",
+                        "surface-container-high": "#eae7ea",
+                        "on-error-container": "#752121",
+                        "primary": "#565e74",
+                        "surface-bright": "#fcf8f9",
+                        "on-primary": "#f7f7ff",
+                        "inverse-surface": "#0e0e0f",
+                        "on-surface": "#323235"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "fontFamily": {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background antialiased overflow-hidden">
+    <!-- SideNavBar Anchor -->
+    <aside
+        class="h-screen w-72 fixed left-0 top-0 z-50 bg-[#f0f4f7] dark:bg-slate-900 flex flex-col py-10 px-6 space-y-8">
+        <div class="flex items-center space-x-3 mb-4">
+            <div class="w-10 h-10 bg-primary flex items-center justify-center rounded-xl shadow-lg">
+                <span class="material-symbols-outlined text-white" data-icon="token">token</span>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tighter text-[#2a3439] dark:text-slate-100">Atelier HR</h1>
+                <p class="font-['Inter'] uppercase tracking-[0.05em] text-[10px] font-semibold text-secondary">Premium
+                    Management</p>
+            </div>
+        </div>
+        <nav class="flex-1 space-y-2 overflow-y-auto no-scrollbar">
+            <!-- Inactive -->
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors rounded-lg group"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                <span class="text-sm font-medium">Dashboard</span>
+            </a>
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors rounded-lg group"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="group">group</span>
+                <span class="text-sm font-medium">Directory</span>
+            </a>
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors rounded-lg group"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="payments">payments</span>
+                <span class="text-sm font-medium">Payroll</span>
+            </a>
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors rounded-lg group"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="monitoring">monitoring</span>
+                <span class="text-sm font-medium">Analytics</span>
+            </a>
+            <!-- Active: Recruitment -->
+            <a class="flex items-center space-x-3 bg-white dark:bg-slate-800 text-[#0053db] dark:text-blue-400 rounded-lg shadow-[0_12px_32px_rgba(42,52,57,0.06)] px-4 py-3 transition-all scale-98"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="person_add">person_add</span>
+                <span class="text-sm font-bold">Recruitment</span>
+            </a>
+        </nav>
+        <button
+            class="w-full bg-primary text-on-primary py-3 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md hover:opacity-90 transition-all">
+            <span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+            <span class="text-sm font-semibold tracking-wide">Add Talent</span>
+        </button>
+        <div class="pt-6 space-y-1">
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] transition-colors rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="help">help</span>
+                <span class="text-sm font-medium">Support</span>
+            </a>
+            <a class="flex items-center space-x-3 text-[#566166] dark:text-slate-400 px-4 py-3 hover:text-[#0053db] transition-colors rounded-lg"
+                href="#">
+                <span class="material-symbols-outlined" data-icon="settings">settings</span>
+                <span class="text-sm font-medium">Settings</span>
+            </a>
+        </div>
+    </aside>
+    <!-- Main Content Shell -->
+    <main class="ml-72 min-h-screen relative">
+        <!-- TopNavBar Anchor -->
+        <header
+            class="fixed top-0 right-0 w-[calc(100%-18rem)] h-20 z-40 bg-[#f7f9fb]/80 dark:bg-slate-950/80 backdrop-blur-[20px] shadow-[0_12px_32px_rgba(42,52,57,0.06)] flex justify-between items-center px-12">
+            <div class="flex items-center flex-1 max-w-md">
+                <div class="relative w-full">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg"
+                        data-icon="search">search</span>
+                    <input
+                        class="w-full pl-10 pr-4 py-2.5 bg-surface-container-low border-none rounded-full text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-outline-variant"
+                        placeholder="Search job desks, candidates..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center space-x-6">
+                <div class="flex items-center space-x-2">
+                    <button
+                        class="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-colors relative">
+                        <span class="material-symbols-outlined text-secondary"
+                            data-icon="notifications_active">notifications_active</span>
+                        <span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white"></span>
+                    </button>
+                    <button class="hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full p-2 transition-colors">
+                        <span class="material-symbols-outlined text-secondary"
+                            data-icon="chat_bubble_outline">chat_bubble_outline</span>
+                    </button>
+                </div>
+                <div class="h-8 w-px bg-outline-variant/30"></div>
+                <div class="flex items-center space-x-3 cursor-pointer group">
+                    <img alt="User Profile"
+                        class="w-10 h-10 rounded-full object-cover shadow-sm group-hover:ring-2 group-hover:ring-primary transition-all"
+                        data-alt="Close-up portrait of a professional man in a tailored blazer against a minimalist gray studio background, soft lighting"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMglRB0Jemrsp114pVT7xeKxwW7jse69tjQhrmCR_gM1vul8tXdyZI4wCdOv5pgczOCv5D1TRSHRHNqtqsZmv_vk6bnlyq0PzBVJ2Ojrc085emedwsKTLyuA3E_BUYnk7Dj3uZdwYfJzadJv24xoltbBWJrdi_RCeul8Ss05GZjqikZqzYK8nmxiMj27IH0BGbKU3SC8N8jEyL3K_0ZYx_i9UhJqSnHWjQCgYeApfsMOB6kXPpVr1BcLir8gxulQyuN6QuUBr6GXI" />
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold text-on-surface">Marcus Vance</span>
+                        <span class="text-[11px] font-medium text-secondary tracking-tight">HR Director</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- Canvas -->
+        <div class="pt-28 px-12 pb-12 overflow-y-auto h-screen no-scrollbar">
+            <!-- Header Section -->
+            <div class="flex justify-between items-end mb-10">
+                <div class="space-y-1">
+                    <h2 class="text-3xl font-extrabold tracking-tight text-on-surface">Jobdesk Management</h2>
+                    <p class="text-secondary font-medium">Oversee active openings and recruitment pipelines.</p>
+                </div>
+                <button
+                    class="bg-primary text-on-primary px-6 py-3 rounded-lg flex items-center space-x-2 shadow-xl shadow-primary/10 hover:translate-y-[-1px] transition-all">
+                    <span class="material-symbols-outlined" data-icon="add_circle">add_circle</span>
+                    <span class="font-bold tracking-tight">Add New Jobdesk</span>
+                </button>
+            </div>
+            <!-- Bento Statistics Grid -->
+            <div class="grid grid-cols-12 gap-6 mb-10">
+                <div
+                    class="col-span-12 md:col-span-4 bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between h-48 border-b-2 border-primary/10">
+                    <span class="text-secondary font-semibold text-xs uppercase tracking-widest">Total Openings</span>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="text-5xl font-extrabold text-primary-dim">24</span>
+                        <span class="text-primary text-sm font-medium">+3 this month</span>
+                    </div>
+                </div>
+                <div
+                    class="col-span-12 md:col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between h-48">
+                    <span class="text-secondary font-semibold text-xs uppercase tracking-widest">Pipeline Health</span>
+                    <div class="flex space-x-4">
+                        <div class="flex-1">
+                            <div class="h-2 w-full bg-primary-container rounded-full mb-3">
+                                <div class="h-full w-3/4 bg-primary rounded-full"></div>
+                            </div>
+                            <span class="text-[11px] text-on-surface-variant font-medium">75% Application
+                                Conversion</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="h-2 w-full bg-secondary-container rounded-full mb-3">
+                                <div class="h-full w-1/2 bg-secondary rounded-full"></div>
+                            </div>
+                            <span class="text-[11px] text-on-surface-variant font-medium">50% Interview
+                                Completion</span>
+                        </div>
+                    </div>
+                </div>
+                <div
+                    class="col-span-12 md:col-span-3 bg-inverse-surface rounded-xl p-8 shadow-xl flex flex-col justify-center items-center text-center">
+                    <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-3">
+                        <span class="material-symbols-outlined text-white" data-icon="bolt">bolt</span>
+                    </div>
+                    <span class="text-inverse-on-surface text-sm font-medium">Average Time to Hire</span>
+                    <span class="text-2xl font-bold text-white mt-1">18 Days</span>
+                </div>
+            </div>
+            <!-- Jobdesk Data Table -->
+            <div
+                class="bg-surface-container-lowest rounded-2xl shadow-[0_20px_60px_rgba(42,52,57,0.04)] overflow-hidden">
+                <div class="px-8 py-6 flex items-center justify-between border-b border-surface-container">
+                    <h3 class="text-lg font-bold text-on-surface">Active Job Roles</h3>
+                    <div class="flex items-center space-x-4">
+                        <button
+                            class="flex items-center space-x-2 text-sm text-secondary hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-lg" data-icon="filter_list">filter_list</span>
+                            <span class="font-medium">Filter</span>
+                        </button>
+                        <button
+                            class="flex items-center space-x-2 text-sm text-secondary hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined text-lg"
+                                data-icon="file_download">file_download</span>
+                            <span class="font-medium">Export</span>
+                        </button>
+                    </div>
+                </div>
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-surface-container-low/50">
+                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Job Title
+                                &amp; ID</th>
+                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">
+                                Department</th>
+                            <th
+                                class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-center">
+                                Candidates</th>
+                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Status
+                            </th>
+                            <th class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Posting
+                                Date</th>
+                            <th
+                                class="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-surface-container/50">
+                        <!-- Row 1 -->
+                        <tr class="hover:bg-surface-container-low/30 transition-colors group">
+                            <td class="px-8 py-5">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-on-surface">Senior Product Designer</span>
+                                    <span class="text-[11px] text-outline font-medium">ID: #DES-402</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant font-medium">Creative Arts</span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <div class="flex justify-center -space-x-2">
+                                    <img alt="C1" class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                        data-alt="Close-up headshot of a diverse woman smiling in a bright professional environment"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvv8Gn8iIA_APMDo8417eS-sVdOlricBX4s3NuRzWakglZgoOy2uENtfKt85Q9Av5z2JX7onQT2bgJbg9puCthYWQCZJf8vTNsBSFoEUAHiBBduTOFXZLyCS0ioJhZAz9A7bJNuS-e2usTVbN4txU7ND08P_Ggi8r6ehaCOwLDY-fJ4tfb_dPz8GShwQLAHnKPLF3YJ3UPtENdyGzSftWe7zFk-WTdQ4rx_zFtewlpNyqlUl57xAv1M4rijvq7Olcex2ZuAHpmScc" />
+                                    <img alt="C2" class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                        data-alt="Portrait of a young man with glasses smiling in a modern office setting"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuChXt8cxLp-46D5qZUk1Ke1XUaRKUjid6b5Mbe0ErFMo7OXjkhHyyltPDK4i0DNbnvEGyXpoQ-9mg9WkX43dKWAwCl1GMygKl_h9T69lsseXPDat7zCiQhz_YhynBLrnVrTRP_d_rqepSENw4a1x9Ehg2O0VzA7WMm06lowpz8TicJVxco2yHA3WiLP74YNfZKO_JzbdZNvn21QTKNCb5V7aehWSXbTm2oyKDHYRv19NJ83wUubVS8Px9a_Owwdmgpxaz90vn9JaBA" />
+                                    <div
+                                        class="w-8 h-8 rounded-full border-2 border-white bg-secondary-container flex items-center justify-center text-[10px] font-bold text-secondary">
+                                        +12</div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span
+                                    class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-full uppercase tracking-tight">Active</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant">Oct 12, 2023</span>
+                            </td>
+                            <td class="px-8 py-5 text-right">
+                                <div
+                                    class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button class="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+                                    </button>
+                                    <button class="p-2 hover:bg-error/10 rounded-lg text-error transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Row 2 -->
+                        <tr class="hover:bg-surface-container-low/30 transition-colors group">
+                            <td class="px-8 py-5">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-on-surface">Cloud Infrastructure Lead</span>
+                                    <span class="text-[11px] text-outline font-medium">ID: #ENG-902</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant font-medium">Engineering</span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <div class="flex justify-center -space-x-2">
+                                    <img alt="C3" class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                        data-alt="Professional corporate headshot of a man with short hair in a light blue shirt"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDt29E9pJYZCG9vvspPDyBA7-kTPr24HQEwHpqBjIUb8GZbZIBjDHwcEkwi6laUOsD86pjgNN9BbreSQMs2paQPz2AYowbCHKiKsr7obS5xap4lTp7KXFPUm1rSpSq0A0OUj7ufMJIvpgx4eaFEbANRytqZuNivVGwYHcGKRd3dfqRgd3yndpbr8g8VX4UgWImZO4iQCJyEPb1NNV3r0ppljSuoBZnHvCBkOBvewqqpVPQSZlaEJ6lCukiM1qenDev1cwAm5p-_xSU" />
+                                    <div
+                                        class="w-8 h-8 rounded-full border-2 border-white bg-secondary-container flex items-center justify-center text-[10px] font-bold text-secondary">
+                                        +4</div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span
+                                    class="px-3 py-1 bg-tertiary-container text-on-tertiary-container text-[10px] font-bold rounded-full uppercase tracking-tight">On
+                                    Hold</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant">Nov 04, 2023</span>
+                            </td>
+                            <td class="px-8 py-5 text-right">
+                                <div
+                                    class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button class="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+                                    </button>
+                                    <button class="p-2 hover:bg-error/10 rounded-lg text-error transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Row 3 -->
+                        <tr class="hover:bg-surface-container-low/30 transition-colors group">
+                            <td class="px-8 py-5">
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-on-surface">Lead Talent Sourcer</span>
+                                    <span class="text-[11px] text-outline font-medium">ID: #HR-112</span>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant font-medium">Operations</span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <div class="flex justify-center -space-x-2">
+                                    <img alt="C4" class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                        data-alt="Portrait of a young professional woman with warm side lighting and a confident expression"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDVwIdCY21rBhSyP3N9-LS6KXFL4qHdjd1KbtHhfUCWzIsUvVF3ngKazj_dEJe14ME9enpA643uZ0z-N6PkmdWLH-Ywz5EIaa3L2qJktZd49rtz_OaUDmDbnvmFYwWkcl2MFAkbSJaj1KrHcnoGY97qsJbPpsaPHiXplyWee9o1GFEL2ukLdO0uHd35lF2pke4Vai_kxdIyIbZoriSvzIZ4WzMf1OMkeqdoERxCZOtgEU-9CAwQMbiQzC9OjY60YzsupRNKaQIx-I" />
+                                    <img alt="C5" class="w-8 h-8 rounded-full border-2 border-white object-cover"
+                                        data-alt="Minimalist studio portrait of a man in a black turtleneck against a neutral background"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR2vFtQBS1M9i69dT3-dn9jEA5Jq-ENsAGViH7sigMADRqr4ahXz7Ddf8IVHCEGdmtVb7WuNCblwiirvZ1KzrgOjhm8Eidgm3IJ43SOR-vU6WvMsIauiKJYZB52i8Rcfx_Cd7bqauIfIU9EJxxDh5BaTmHeVzq_REvUqsquUbqKjdHmP-9zTQoKg1sW1gJgmozsnttBGX6e2QwNwdZIxpqyB8fwW7lNstMt1IHlKR3x3xdahJ2Tnm8lIIIwOizzvKi1fHbzJ4iZFY" />
+                                    <div
+                                        class="w-8 h-8 rounded-full border-2 border-white bg-secondary-container flex items-center justify-center text-[10px] font-bold text-secondary">
+                                        +8</div>
+                                </div>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span
+                                    class="px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-full uppercase tracking-tight">Active</span>
+                            </td>
+                            <td class="px-8 py-5">
+                                <span class="text-sm text-on-surface-variant">Nov 18, 2023</span>
+                            </td>
+                            <td class="px-8 py-5 text-right">
+                                <div
+                                    class="flex items-center justify-end space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button class="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+                                    </button>
+                                    <button class="p-2 hover:bg-error/10 rounded-lg text-error transition-colors">
+                                        <span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="px-8 py-6 flex items-center justify-between bg-surface-container-low/20">
+                    <span class="text-xs text-secondary font-medium">Showing 3 of 24 job desks</span>
+                    <div class="flex items-center space-x-2">
+                        <button
+                            class="p-2 rounded-lg border border-outline-variant hover:bg-white transition-colors disabled:opacity-50"
+                            disabled="">
+                            <span class="material-symbols-outlined text-sm" data-icon="chevron_left">chevron_left</span>
+                        </button>
+                        <div class="flex items-center space-x-1 px-4 text-xs font-bold text-on-surface">
+                            <span class="text-primary underline underline-offset-4">1</span>
+                            <span class="hover:text-primary cursor-pointer px-2 transition-colors">2</span>
+                            <span class="hover:text-primary cursor-pointer px-2 transition-colors">3</span>
+                        </div>
+                        <button class="p-2 rounded-lg border border-outline-variant hover:bg-white transition-colors">
+                            <span class="material-symbols-outlined text-sm"
+                                data-icon="chevron_right">chevron_right</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Modal Mockup (Visual only) -->
+    <div
+        class="hidden fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-inverse-surface/10">
+        <div
+            class="bg-surface-container-lowest w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="px-10 py-8 border-b border-surface-container flex justify-between items-center">
+                <h4 class="text-xl font-extrabold text-on-surface tracking-tight">Create Jobdesk</h4>
+                <button class="text-secondary hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined" data-icon="close">close</span>
+                </button>
+            </div>
+            <div class="px-10 py-8 space-y-6">
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-secondary">Job Role Title</label>
+                    <input
+                        class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20"
+                        placeholder="e.g. Senior Software Engineer" type="text" />
+                </div>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-secondary">Department</label>
+                        <select
+                            class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20">
+                            <option>Engineering</option>
+                            <option>Marketing</option>
+                            <option>Product</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-secondary">Experience
+                            Level</label>
+                        <select
+                            class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20">
+                            <option>Junior</option>
+                            <option>Mid-level</option>
+                            <option>Senior</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-secondary">Job
+                        Description</label>
+                    <textarea
+                        class="w-full bg-surface-container-low border-none rounded-lg p-3 text-sm focus:ring-2 focus:ring-primary/20 h-32"
+                        placeholder="Define the core responsibilities..."></textarea>
+                </div>
+            </div>
+            <div class="px-10 py-6 bg-surface-container-low/50 flex justify-end space-x-4">
+                <button
+                    class="px-6 py-2.5 text-sm font-semibold text-secondary hover:text-on-surface transition-colors">Cancel</button>
+                <button
+                    class="px-8 py-2.5 bg-primary text-on-primary text-sm font-bold rounded-lg shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all">Publish
+                    Opening</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
