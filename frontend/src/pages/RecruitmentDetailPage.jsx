@@ -131,28 +131,28 @@ export default function RecruitmentDetailPage() {
 
   return (
     <DashboardLayout searchPlaceholder="Search applicants..." onSearch={setSearch}>
-      <div className="px-12 pb-20 pt-6 space-y-8">
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 pb-12 md:pb-20 pt-4 md:pt-6 space-y-6 md:space-y-8">
         {/* Breadcrumb + Header */}
-        <section className="flex justify-between items-end">
+        <section className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
-            <nav className="flex items-center space-x-2 text-xs font-medium text-outline-variant mb-3">
+            <nav className="flex items-center space-x-2 text-xs font-medium text-outline-variant mb-2 md:mb-3">
               <Link to="/recruitment" className="hover:text-primary transition-colors">Recruitment</Link>
               <span className="material-symbols-outlined text-[12px]">chevron_right</span>
               <span className="text-on-surface">{jobdesk?.title || 'Loading...'}</span>
             </nav>
-            <h2 className="text-[3.5rem] font-extrabold tracking-tight text-on-surface leading-none">
+            <h2 className="text-2xl sm:text-4xl lg:text-[3.5rem] font-extrabold tracking-tight text-on-surface leading-tight">
               {jobdesk?.title?.split(' ').slice(0, 2).join(' ') || '—'}
             </h2>
-            <p className="text-on-surface-variant mt-3 text-sm max-w-lg">
+            <p className="text-on-surface-variant mt-2 md:mt-3 text-xs md:text-sm max-w-lg">
               Reviewing {sortedApplicants.length} candidates • Email subject:{' '}
               <span className="font-bold text-primary">{jobdesk?.email_subject}</span>
             </p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-2 md:space-x-3 w-full sm:w-auto">
             <button
               onClick={handleRescore}
               disabled={rescoring}
-              className="flex items-center gap-2 bg-surface-container-highest px-5 py-3 rounded-lg text-sm font-semibold text-on-surface transition-all hover:bg-surface-container active:scale-[0.98]"
+              className="flex-1 sm:flex-initial flex items-center justify-center gap-2 bg-surface-container-highest px-4 md:px-5 py-2.5 md:py-3 rounded-lg text-xs md:text-sm font-semibold text-on-surface transition-all hover:bg-surface-container active:scale-[0.98] min-h-[44px]"
             >
               {rescoring ? (
                 <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -161,7 +161,7 @@ export default function RecruitmentDetailPage() {
               )}
               Re-Score All CVs
             </button>
-            <button className="btn-primary flex items-center gap-2">
+            <button className="flex-1 sm:flex-initial btn-primary flex items-center justify-center gap-2 text-xs md:text-sm py-2.5 md:py-3 min-h-[44px]">
               <span className="material-symbols-outlined text-[18px]">file_download</span>
               Export List
             </button>
@@ -169,38 +169,38 @@ export default function RecruitmentDetailPage() {
         </section>
 
         {/* Insights Grid */}
-        <section className="grid grid-cols-12 gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
           {/* Avg Match Score */}
-          <div className="col-span-8 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between">
+          <div className="lg:col-span-8 bg-surface-container-low rounded-xl p-5 md:p-8 flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-60">
                   Success Metric
                 </span>
-                <p className="text-4xl font-bold mt-2">
+                <p className="text-2xl sm:text-4xl font-bold mt-2">
                   {loading ? '—' : `${summary.avgScore}% Match Avg.`}
                 </p>
               </div>
-              <ScoreCircle score={summary.avgScore || 0} size={80} />
+              <ScoreCircle score={summary.avgScore || 0} size={64} />
             </div>
-            <p className="text-sm text-on-surface-variant leading-relaxed mt-6">
+            <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed mt-4 md:mt-6">
               The current pool represents active candidates scored by the TalentSift v2 AI engine using TF-IDF vectorization
               and Cosine Similarity. Higher scores indicate stronger alignment with the job description.
             </p>
           </div>
 
           {/* Quick Summary */}
-          <div className="col-span-4 bg-surface-container-highest rounded-xl p-8 space-y-4">
+          <div className="lg:col-span-4 bg-surface-container-highest rounded-xl p-5 md:p-8 space-y-4">
             <span className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Quick Summary</span>
-            <div className="space-y-4">
+            <div className="space-y-3 md:space-y-4">
               {[
                 { label: 'In Screening', value: summary.inScreening },
                 { label: 'Interviewed', value: summary.interviewed },
                 { label: 'On Hold', value: summary.onHold },
               ].map((item, i) => (
                 <div key={i} className={`flex justify-between items-center ${i < 2 ? 'border-b border-outline-variant/10 pb-3' : ''}`}>
-                  <span className="text-sm">{item.label}</span>
-                  <span className="font-bold">{String(item.value).padStart(2, '0')}</span>
+                  <span className="text-xs md:text-sm">{item.label}</span>
+                  <span className="font-bold text-sm md:text-base">{String(item.value).padStart(2, '0')}</span>
                 </div>
               ))}
             </div>
@@ -209,13 +209,13 @@ export default function RecruitmentDetailPage() {
 
         {/* Applicants Table */}
         <section className="bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(15,23,42,0.04)] overflow-hidden">
-          <div className="px-8 py-6 border-b border-surface-container-high flex justify-between items-center">
-            <h3 className="font-bold text-lg">Active Applicants</h3>
-            <div className="flex items-center space-x-3">
+          <div className="px-4 md:px-8 py-4 md:py-6 border-b border-surface-container-high flex flex-wrap justify-between items-center gap-3">
+            <h3 className="font-bold text-base md:text-lg">Active Applicants</h3>
+            <div className="flex items-center space-x-2 md:space-x-3">
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="text-sm border-none bg-surface-container rounded-lg px-3 py-2 text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
+                className="text-xs md:text-sm border-none bg-surface-container rounded-lg px-3 py-2 text-on-surface focus:ring-2 focus:ring-primary/20 outline-none"
               >
                 <option value="score_desc">Score: High to Low</option>
                 <option value="score_asc">Score: Low to High</option>
@@ -223,100 +223,101 @@ export default function RecruitmentDetailPage() {
                 <option value="date">Latest First</option>
               </select>
               <button className="p-2 hover:bg-surface-container text-outline-variant rounded-lg transition-colors">
-                <span className="material-symbols-outlined text-[20px]">filter_list</span>
+                <span className="material-symbols-outlined text-[18px] md:text-[20px]">filter_list</span>
               </button>
             </div>
           </div>
 
-          <table className="w-full text-left">
-            <thead>
-              <tr className="text-[10px] uppercase tracking-widest text-outline-variant font-bold bg-surface-container-low/50">
-                <th className="px-8 py-5">#</th>
-                <th className="px-8 py-5">Applicant Name</th>
-                <th className="px-8 py-5">CV Match Score</th>
-                <th className="px-8 py-5">Screening Status</th>
-
-                <th className="px-8 py-5">Applied</th>
-                <th className="px-8 py-5 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-container-high">
-              {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-8 py-16 text-center text-outline">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span>Loading applicants...</span>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto w-full">
+            <table className="text-left border-collapse" style={{ minWidth: '700px', width: '100%' }}>
+              <thead>
+                <tr className="text-[10px] uppercase tracking-widest text-outline-variant font-bold bg-surface-container-low/50">
+                  <th className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">#</th>
+                  <th className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">Applicant Name</th>
+                  <th className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">CV Match Score</th>
+                  <th className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">Screening Status</th>
+                  <th className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">Applied</th>
+                  <th className="px-4 md:px-8 py-4 md:py-5 text-right whitespace-nowrap">Actions</th>
                 </tr>
-              ) : sortedApplicants.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-8 py-16 text-center text-outline">
-                    No applicants found for this jobdesk yet.
-                  </td>
-                </tr>
-              ) : (
-                sortedApplicants.map((applicant, idx) => (
-                  <tr key={applicant.id} className="hover:bg-surface-container-low/50 transition-colors">
-                    <td className="px-8 py-5 text-sm text-outline font-medium">{idx + 1}</td>
-                    <td className="px-8 py-5">
-                      <div className="flex items-center space-x-3">
-                        <div className={`h-9 w-9 rounded-lg overflow-hidden flex items-center justify-center font-bold text-sm flex-shrink-0 ${avatarColors[idx % avatarColors.length]}`}>
-                          {getInitials(applicant.name)}
-                        </div>
-                        <div>
-                          <p className="text-sm font-bold">{applicant.name}</p>
-                          <p className="text-[10px] text-on-surface-variant">
-                            {applicant.role} {applicant.location ? `• ${applicant.location}` : ''}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-8 py-5">
-                      <ScoreBar score={applicant.match_score} />
-                    </td>
-                    <td className="px-8 py-5">
-                      <button
-                        onClick={() => {
-                          setSelectedApplicant(applicant);
-                          setNewStatus(applicant.screening_status);
-                          setStatusModal(true);
-                        }}
-                        className="hover:opacity-80 transition-opacity"
-                      >
-                        <StatusBadge status={applicant.screening_status} />
-                      </button>
-                    </td>
-
-                    <td className="px-8 py-5">
-                      <span className="text-xs text-on-surface-variant">
-                        {applicant.received_at ? new Date(applicant.received_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-right">
-                      <div className="flex justify-end space-x-2">
-                        <button
-                          onClick={() => { setCvApplicant(applicant); setCvModal(true); }}
-                          className="text-xs font-bold text-primary hover:underline underline-offset-4 decoration-primary/20"
-                        >
-                          View CV
-                        </button>
-                        <button
-                          onClick={() => handleSendEmail(applicant)}
-                          className="text-xs font-bold text-primary hover:underline underline-offset-4 decoration-primary/20"
-                        >
-                          Send Email
-                        </button>
+              </thead>
+              <tbody className="divide-y divide-surface-container-high">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-16 text-center text-outline">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span>Loading applicants...</span>
                       </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : sortedApplicants.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-16 text-center text-outline">
+                      No applicants found for this jobdesk yet.
+                    </td>
+                  </tr>
+                ) : (
+                  sortedApplicants.map((applicant, idx) => (
+                    <tr key={applicant.id} className="hover:bg-surface-container-low/50 transition-colors">
+                      <td className="px-4 md:px-8 py-4 md:py-5 text-sm text-outline font-medium whitespace-nowrap">{idx + 1}</td>
+                      <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
+                        <div className="flex items-center space-x-3">
+                          <div className={`h-9 w-9 rounded-lg overflow-hidden flex items-center justify-center font-bold text-sm flex-shrink-0 ${avatarColors[idx % avatarColors.length]}`}>
+                            {getInitials(applicant.name)}
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold">{applicant.name}</p>
+                            <p className="text-[10px] text-on-surface-variant">
+                              {applicant.role} {applicant.location ? `• ${applicant.location}` : ''}
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
+                        <ScoreBar score={applicant.match_score} />
+                      </td>
+                      <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
+                        <button
+                          onClick={() => {
+                            setSelectedApplicant(applicant);
+                            setNewStatus(applicant.screening_status);
+                            setStatusModal(true);
+                          }}
+                          className="hover:opacity-80 transition-opacity"
+                        >
+                          <StatusBadge status={applicant.screening_status} />
+                        </button>
+                      </td>
 
-          <div className="px-8 py-4 bg-surface-container-low/30 flex items-center justify-between">
+                      <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
+                        <span className="text-xs text-on-surface-variant">
+                          {applicant.received_at ? new Date(applicant.received_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}
+                        </span>
+                      </td>
+                      <td className="px-4 md:px-8 py-4 md:py-5 text-right whitespace-nowrap">
+                        <div className="flex justify-end space-x-3">
+                          <button
+                            onClick={() => { setCvApplicant(applicant); setCvModal(true); }}
+                            className="text-xs font-bold text-primary hover:underline underline-offset-4 decoration-primary/20"
+                          >
+                            View CV
+                          </button>
+                          <button
+                            onClick={() => handleSendEmail(applicant)}
+                            className="text-xs font-bold text-primary hover:underline underline-offset-4 decoration-primary/20"
+                          >
+                            Send Email
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="px-4 md:px-8 py-4 bg-surface-container-low/30 flex items-center justify-between">
             <p className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">
               Displaying {sortedApplicants.length} of {applicants.length} candidates
             </p>
@@ -324,54 +325,54 @@ export default function RecruitmentDetailPage() {
         </section>
 
         {/* ML Info Panel */}
-        <section className="grid grid-cols-12 gap-6 pb-4">
-          <div className="col-span-12 lg:col-span-5 bg-primary p-12 rounded-xl text-on-primary relative overflow-hidden">
+        <section className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 pb-4">
+          <div className="lg:col-span-5 bg-primary p-6 md:p-12 rounded-xl text-on-primary relative overflow-hidden">
             <div className="relative z-10">
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] opacity-70">
                 TalentSift v2 — ML Engine
               </span>
-              <h4 className="text-3xl font-bold mt-4 leading-tight">
+              <h4 className="text-xl md:text-3xl font-bold mt-2 md:mt-4 leading-tight">
                 Identify top 5% matches instantly.
               </h4>
-              <p className="mt-4 text-primary-container/80 text-sm leading-relaxed">
+              <p className="mt-2 md:mt-4 text-primary-container/80 text-xs md:text-sm leading-relaxed">
                 TalentSift v2 uses Sentecend Bert and Cosine Similarity to compare CV text against
                 the job description. Emails arriving with subject <strong>{jobdesk?.email_subject}</strong> are
                 automatically parsed, scored, and indexed.
               </p>
-              <button className="mt-8 px-6 py-3 border border-on-primary/20 rounded-lg hover:bg-on-primary hover:text-primary transition-all text-xs font-bold">
+              <button className="mt-6 md:mt-8 px-5 md:px-6 py-2.5 md:py-3 border border-on-primary/20 rounded-lg hover:bg-on-primary hover:text-primary transition-all text-xs font-bold min-h-[44px]">
                 Configure Scoring Logic
               </button>
             </div>
             <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-white/10 blur-[60px]" />
           </div>
 
-          <div className="col-span-12 lg:col-span-7 bg-surface-container-low p-10 rounded-xl space-y-8">
+          <div className="lg:col-span-7 bg-surface-container-low p-6 md:p-10 rounded-xl space-y-6 md:space-y-8">
             <div className="flex justify-between items-center">
-              <h4 className="font-bold">Automated Email Integration</h4>
+              <h4 className="font-bold text-base md:text-lg">Automated Email Integration</h4>
               <span className="material-symbols-outlined text-primary">auto_awesome</span>
             </div>
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+              <div className="space-y-1.5 md:space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Email Subject Filter</label>
-                <div className="p-4 bg-white rounded-lg border border-outline-variant/10 text-sm font-mono font-medium text-primary">
+                <div className="p-3 md:p-4 bg-white rounded-lg border border-outline-variant/10 text-xs md:text-sm font-mono font-medium text-primary break-all">
                   {jobdesk?.email_subject || '—'}
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 md:space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Trigger Schedule</label>
-                <div className="p-4 bg-white rounded-lg border border-outline-variant/10 text-sm font-medium">
+                <div className="p-3 md:p-4 bg-white rounded-lg border border-outline-variant/10 text-xs md:text-sm font-medium">
                   Every 5 minutes (IMAP polling)
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 md:space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Scoring Model</label>
-                <div className="p-4 bg-white rounded-lg border border-outline-variant/10 text-sm font-medium">
+                <div className="p-3 md:p-4 bg-white rounded-lg border border-outline-variant/10 text-xs md:text-sm font-medium">
                   model_talentsift_v2 (TF-IDF + Cosine)
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5 md:space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">High Match Threshold</label>
-                <div className="p-4 bg-white rounded-lg border border-outline-variant/10 text-sm font-medium">
+                <div className="p-3 md:p-4 bg-white rounded-lg border border-outline-variant/10 text-xs md:text-sm font-medium">
                   ≥ 80% → Auto Shortlist
                 </div>
               </div>

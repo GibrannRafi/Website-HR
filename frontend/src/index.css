@@ -8,10 +8,21 @@
 @layer base {
   :root {
     --sidebar-width: 18rem;
+    --topbar-height: 4rem;
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --topbar-height: 5rem;
+    }
   }
 
   * {
     box-sizing: border-box;
+  }
+
+  html, body {
+    overflow-x: hidden;
   }
 
   body {
@@ -29,7 +40,9 @@
 }
 
 @layer components {
-  /* Material Symbols */
+  /* ============================================================
+     Material Symbols
+     ============================================================ */
   .material-symbols-outlined {
     font-family: 'Material Symbols Outlined';
     font-weight: normal;
@@ -49,18 +62,26 @@
     font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
   }
 
-  /* Sidebar */
+  /* ============================================================
+     Sidebar
+     ============================================================ */
   .sidebar {
-    @apply h-screen w-72 fixed left-0 top-0 z-50 bg-[#f0f4f7] flex flex-col py-10 px-6 space-y-8;
+    @apply h-screen w-72 fixed left-0 top-0 z-50 bg-[#f0f4f7] flex flex-col py-8 px-6 space-y-8;
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Mobile: hidden by default */
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
   }
 
   .sidebar-link {
-    @apply flex items-center space-x-3 text-[#566166] px-4 py-3 hover:text-[#0053db] hover:bg-white/50 transition-colors rounded-lg cursor-pointer;
+    @apply flex items-center space-x-3 text-[#566166] px-4 py-3 hover:text-[#0053db] hover:bg-white/50 transition-colors rounded-lg cursor-pointer min-h-[44px];
   }
 
   .sidebar-link-active {
-    @apply flex items-center space-x-3 bg-white text-[#0053db] rounded-lg shadow-[0_12px_32px_rgba(42,52,57,0.06)] px-4 py-3 transition-all cursor-pointer;
+    @apply flex items-center space-x-3 bg-white text-[#0053db] rounded-lg shadow-[0_12px_32px_rgba(42,52,57,0.06)] px-4 py-3 transition-all cursor-pointer min-h-[44px];
   }
 
   /* Sidebar mobile overlay */
@@ -73,7 +94,9 @@
     display: block;
   }
 
-  /* Cards */
+  /* ============================================================
+     Cards
+     ============================================================ */
   .card {
     @apply bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(15,23,42,0.04)] overflow-hidden;
   }
@@ -82,7 +105,9 @@
     @apply bg-surface-container-low rounded-xl;
   }
 
-  /* Badges / Status */
+  /* ============================================================
+     Badges / Status
+     ============================================================ */
   .badge-active {
     @apply px-3 py-1 bg-primary-container text-on-primary-container text-[10px] font-bold rounded-full uppercase tracking-tight;
   }
@@ -99,31 +124,47 @@
     @apply px-3 py-1 bg-secondary-container text-on-secondary-container text-[10px] font-bold rounded-full uppercase tracking-tight;
   }
 
-  /* Buttons */
+  /* ============================================================
+     Buttons — touch-friendly min 44px height
+     ============================================================ */
   .btn-primary {
-    @apply bg-primary text-on-primary px-6 py-3 rounded-lg font-bold tracking-tight shadow-xl shadow-primary/10 hover:translate-y-[-1px] hover:opacity-90 active:scale-[0.98] transition-all duration-200;
+    @apply bg-primary text-on-primary px-6 py-3 rounded-lg font-bold tracking-tight shadow-xl shadow-primary/10 hover:translate-y-[-1px] hover:opacity-90 active:scale-[0.98] transition-all duration-200 min-h-[44px];
   }
 
   .btn-ghost {
-    @apply px-6 py-2.5 text-sm font-semibold text-secondary hover:text-on-surface transition-colors;
+    @apply px-6 py-2.5 text-sm font-semibold text-secondary hover:text-on-surface transition-colors min-h-[44px] flex items-center;
   }
 
   .btn-outlined {
-    @apply px-6 py-2.5 border border-outline-variant text-on-surface text-sm font-semibold rounded-lg hover:bg-surface-container transition-colors;
+    @apply px-6 py-2.5 border border-outline-variant text-on-surface text-sm font-semibold rounded-lg hover:bg-surface-container transition-colors min-h-[44px];
   }
 
-  /* Inputs */
+  /* ============================================================
+     Inputs — full width, accessible
+     ============================================================ */
   .input-field {
-    @apply w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-on-surface placeholder:text-outline-variant focus:ring-2 focus:ring-primary/20 outline-none transition-all;
+    @apply w-full bg-surface-container-low border-none rounded-lg py-3 px-4 text-on-surface placeholder:text-outline-variant focus:ring-2 focus:ring-primary/20 outline-none transition-all min-h-[48px];
   }
 
   .input-ghost {
     @apply w-full bg-surface-container-high/30 border-0 border-b border-transparent focus:border-primary-dim focus:ring-0 px-4 py-3 rounded-lg text-on-surface placeholder:text-outline-variant transition-all outline-none;
   }
 
-  /* Table */
+  /* ============================================================
+     Table — horizontal scroll wrapper
+     ============================================================ */
+  .table-scroll-wrapper {
+    @apply overflow-x-auto w-full;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive {
+    min-width: 640px;
+    width: 100%;
+  }
+
   .table-header th {
-    @apply px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline bg-surface-container-low/50;
+    @apply px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline bg-surface-container-low/50 whitespace-nowrap;
   }
 
   .table-row {
@@ -131,32 +172,43 @@
   }
 
   .table-cell {
-    @apply px-8 py-5;
+    @apply px-4 md:px-8 py-4 md:py-5;
   }
 
-  /* Score bar */
+  /* ============================================================
+     Score bar
+     ============================================================ */
   .score-bar {
     @apply h-1.5 bg-surface-container-high rounded-full overflow-hidden;
   }
 
-  /* Topbar */
+  /* ============================================================
+     Topbar — full-width on mobile, offset on desktop
+     ============================================================ */
   .topbar {
     @apply fixed top-0 right-0 z-40 h-16 md:h-20 bg-[#f7f9fb]/80 backdrop-blur-[20px] shadow-[0_12px_32px_rgba(42,52,57,0.06)] flex justify-between items-center px-4 md:px-12;
     width: 100%;
   }
 
-  /* Main content area */
+  /* ============================================================
+     Main content area
+     ============================================================ */
   .main-content {
     margin-left: 0;
-    padding-top: 4rem;
+    padding-top: var(--topbar-height);
+    min-height: 100vh;
   }
 
-  /* Hamburger button */
+  /* ============================================================
+     Hamburger button — touch-friendly
+     ============================================================ */
   .hamburger-btn {
-    @apply flex items-center justify-center w-10 h-10 rounded-xl hover:bg-surface-container transition-colors cursor-pointer;
+    @apply flex items-center justify-center w-11 h-11 rounded-xl hover:bg-surface-container transition-colors cursor-pointer;
   }
 
-  /* Text gradient */
+  /* ============================================================
+     Text gradient
+     ============================================================ */
   .text-editorial-gradient {
     background: linear-gradient(to right, #565e74, #4a5268);
     -webkit-background-clip: text;
@@ -164,14 +216,18 @@
     background-clip: text;
   }
 
-  /* Glass effect */
+  /* ============================================================
+     Glass effect
+     ============================================================ */
   .glass-bg {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(252, 248, 249, 0.8) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
 
-  /* No scrollbar */
+  /* ============================================================
+     No scrollbar
+     ============================================================ */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -180,41 +236,45 @@
     scrollbar-width: none;
   }
 
-  /* Percentage score colors */
-  .score-high {
-    @apply text-primary;
-  }
-  .score-medium {
-    @apply text-[#b45309];
-  }
-  .score-low {
-    @apply text-error;
-  }
+  /* ============================================================
+     Score colors
+     ============================================================ */
+  .score-high   { @apply text-primary; }
+  .score-medium { @apply text-[#b45309]; }
+  .score-low    { @apply text-error; }
 
-  /* Background grid pattern */
+  /* ============================================================
+     Background grid pattern
+     ============================================================ */
   .bg-grid-pattern {
     background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M 40 0 L 0 0 0 40' fill='none' stroke='%23565e74' stroke-width='0.5'/%3E%3C/svg%3E");
     opacity: 0.03;
   }
 
-  /* Modal backdrop */
+  /* ============================================================
+     Modal backdrop
+     ============================================================ */
   .modal-backdrop {
-    @apply fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-inverse-surface/10;
+    @apply fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 backdrop-blur-sm bg-inverse-surface/10;
   }
 
-  /* Notification dot */
+  /* ============================================================
+     Notification dot
+     ============================================================ */
   .notif-dot {
     @apply absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-white;
   }
 
-  /* Animate fade-in */
+  /* ============================================================
+     Animations
+     ============================================================ */
   .animate-fade-in {
     animation: fadeIn 0.3s ease forwards;
   }
 
   @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.97) translateY(4px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
   .animate-slide-in {
@@ -223,7 +283,7 @@
 
   @keyframes slideIn {
     from { opacity: 0; transform: translateX(-8px); }
-    to { opacity: 1; transform: translateX(0); }
+    to   { opacity: 1; transform: translateX(0); }
   }
 }
 
@@ -231,7 +291,7 @@
    Responsive Layout
    ============================================================ */
 
-/* Mobile: sidebar hidden by default, slides in */
+/* ── Mobile (< 768px): sidebar slides in as drawer ── */
 @media (max-width: 767px) {
   .sidebar {
     transform: translateX(-100%);
@@ -241,21 +301,18 @@
     transform: translateX(0);
   }
 
-  .main-content {
-    margin-left: 0 !important;
-    padding-top: 4rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
-  }
-
   .topbar {
     width: 100% !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
+    left: 0 !important;
+  }
+
+  .main-content {
+    margin-left: 0 !important;
+    padding-top: 4rem !important;
   }
 }
 
-/* Desktop: always show sidebar, content offset */
+/* ── Desktop (≥ 768px): sidebar always visible, content offset ── */
 @media (min-width: 768px) {
   .sidebar {
     transform: translateX(0) !important;
@@ -267,12 +324,11 @@
 
   .topbar {
     width: calc(100% - var(--sidebar-width)) !important;
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    left: var(--sidebar-width) !important;
   }
 
   .main-content {
     margin-left: var(--sidebar-width) !important;
-    padding-top: 5rem;
+    padding-top: 5rem !important;
   }
 }

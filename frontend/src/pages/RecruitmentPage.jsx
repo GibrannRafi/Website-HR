@@ -144,40 +144,40 @@ export default function RecruitmentPage() {
 
   return (
     <DashboardLayout searchPlaceholder="Search job desks, candidates..." onSearch={setSearch}>
-      <div className="px-12 pb-12 pt-8">
+      <div className="px-4 sm:px-6 md:px-8 lg:px-12 pb-8 md:pb-12 pt-4 md:pt-8">
         {/* Header */}
-        <div className="flex justify-between items-end mb-10">
+        <div className="flex flex-wrap gap-4 justify-between items-start md:items-end mb-6 md:mb-10">
           <div className="space-y-1">
-            <h2 className="text-3xl font-extrabold tracking-tight text-on-surface">Jobdesk Management</h2>
-            <p className="text-secondary font-medium">Oversee active openings and recruitment pipelines.</p>
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-on-surface">Jobdesk Management</h2>
+            <p className="text-secondary font-medium text-sm md:text-base">Oversee active openings and recruitment pipelines.</p>
           </div>
-          <button onClick={openAddModal} className="btn-primary flex items-center space-x-2">
-            <span className="material-symbols-outlined text-[20px]">add_circle</span>
+          <button onClick={openAddModal} className="btn-primary flex items-center space-x-2 text-sm">
+            <span className="material-symbols-outlined text-[18px] md:text-[20px]">add_circle</span>
             <span className="font-bold tracking-tight">Add New Jobdesk</span>
           </button>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-12 gap-6 mb-10">
-          <div className="col-span-12 md:col-span-4 bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between h-48 border-b-2 border-primary/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 md:gap-6 mb-6 md:mb-10">
+          <div className="sm:col-span-1 lg:col-span-4 bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between min-h-[140px] md:h-48 border-b-2 border-primary/10">
             <span className="text-secondary font-semibold text-xs uppercase tracking-widest">Total Openings</span>
             <div className="flex items-baseline space-x-2">
-              <span className="text-5xl font-extrabold text-primary-dim">{stats.totalOpenings}</span>
+              <span className="text-4xl md:text-5xl font-extrabold text-primary-dim">{stats.totalOpenings}</span>
               <span className="text-primary text-sm font-medium">+3 this month</span>
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between h-48">
+          <div className="sm:col-span-1 lg:col-span-5 bg-surface-container-lowest rounded-xl p-6 md:p-8 shadow-[0_20px_40px_rgba(15,23,42,0.03)] flex flex-col justify-between min-h-[140px] md:h-48">
             <span className="text-secondary font-semibold text-xs uppercase tracking-widest">Pipeline Health</span>
-            <div className="flex space-x-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="flex-1">
-                <div className="h-2 w-full bg-primary-container rounded-full mb-3">
+                <div className="h-2 w-full bg-primary-container rounded-full mb-2">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${stats.appConversion}%` }} />
                 </div>
                 <span className="text-[11px] text-on-surface-variant font-medium">{stats.appConversion}% Application Conversion</span>
               </div>
               <div className="flex-1">
-                <div className="h-2 w-full bg-secondary-container rounded-full mb-3">
+                <div className="h-2 w-full bg-secondary-container rounded-full mb-2">
                   <div className="h-full bg-secondary rounded-full" style={{ width: `${stats.interviewCompletion}%` }} />
                 </div>
                 <span className="text-[11px] text-on-surface-variant font-medium">{stats.interviewCompletion}% Interview Completion</span>
@@ -185,119 +185,122 @@ export default function RecruitmentPage() {
             </div>
           </div>
 
-          <div className="col-span-12 md:col-span-3 bg-inverse-surface rounded-xl p-8 shadow-xl flex flex-col justify-center items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center mb-3">
-              <span className="material-symbols-outlined text-white">bolt</span>
+          <div className="sm:col-span-2 lg:col-span-3 bg-inverse-surface rounded-xl p-6 md:p-8 shadow-xl flex flex-col justify-center items-center text-center">
+            <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex items-center justify-center mb-2 md:mb-3">
+              <span className="material-symbols-outlined text-white text-[20px]">bolt</span>
             </div>
             <span className="text-inverse-on-surface text-sm font-medium">Avg Time to Hire</span>
-            <span className="text-2xl font-bold text-white mt-1">{stats.avgTimeToHire} Days</span>
+            <span className="text-xl md:text-2xl font-bold text-white mt-1">{stats.avgTimeToHire} Days</span>
           </div>
         </div>
 
         {/* Table */}
         <div className="bg-surface-container-lowest rounded-2xl shadow-[0_20px_60px_rgba(42,52,57,0.04)] overflow-hidden">
-          <div className="px-8 py-6 flex items-center justify-between border-b border-surface-container">
-            <h3 className="text-lg font-bold text-on-surface">Active Job Roles</h3>
-            <div className="flex items-center space-x-4">
-              <button className="flex items-center space-x-2 text-sm text-secondary hover:text-primary transition-colors">
+          <div className="px-4 md:px-8 py-4 md:py-6 flex items-center justify-between border-b border-surface-container">
+            <h3 className="text-base md:text-lg font-bold text-on-surface">Active Job Roles</h3>
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <button className="flex items-center space-x-1 md:space-x-2 text-sm text-secondary hover:text-primary transition-colors">
                 <span className="material-symbols-outlined text-lg">filter_list</span>
-                <span className="font-medium">Filter</span>
+                <span className="font-medium hidden sm:inline">Filter</span>
               </button>
-              <button className="flex items-center space-x-2 text-sm text-secondary hover:text-primary transition-colors">
+              <button className="flex items-center space-x-1 md:space-x-2 text-sm text-secondary hover:text-primary transition-colors">
                 <span className="material-symbols-outlined text-lg">file_download</span>
-                <span className="font-medium">Export</span>
+                <span className="font-medium hidden sm:inline">Export</span>
               </button>
             </div>
           </div>
 
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-surface-container-low/50">
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Job Title & Subject</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Department</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-center">Candidates</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Status</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline">Posting Date</th>
-                <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-container/50">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="px-8 py-16 text-center text-outline">
-                    <div className="flex items-center justify-center gap-2">
-                      <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      <span>Loading jobdesks...</span>
-                    </div>
-                  </td>
+          {/* ── Horizontal scroll wrapper for table ── */}
+          <div className="overflow-x-auto w-full">
+            <table className="text-left border-collapse" style={{ minWidth: '640px', width: '100%' }}>
+              <thead>
+                <tr className="bg-surface-container-low/50">
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline whitespace-nowrap">Job Title & Subject</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline whitespace-nowrap">Department</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-center whitespace-nowrap">Candidates</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline whitespace-nowrap">Status</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline whitespace-nowrap">Posting Date</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-outline text-right whitespace-nowrap">Actions</th>
                 </tr>
-              ) : paginatedJobdesks.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="px-8 py-16 text-center text-outline">
-                    No jobdesks found. Create one to get started.
-                  </td>
-                </tr>
-              ) : paginatedJobdesks.map((job) => (
-                <tr key={job.id} className="hover:bg-surface-container-low/30 transition-colors group">
-                  <td className="px-8 py-5">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-bold text-on-surface">{job.title}</span>
-                      <span className="text-[11px] text-outline font-medium mt-0.5">
-                        Email: {job.email_subject}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="text-sm text-on-surface-variant font-medium">{job.department}</span>
-                  </td>
-                  <td className="px-8 py-5 text-center">
-                    <button
-                      onClick={() => navigate(`/recruitment/${job.id}`)}
-                      className="text-sm font-bold text-primary hover:underline underline-offset-4"
-                    >
-                      {job.candidate_count || 0} candidates
-                    </button>
-                  </td>
-                  <td className="px-8 py-5">
-                    <StatusBadge status={job.status} />
-                  </td>
-                  <td className="px-8 py-5">
-                    <span className="text-sm text-on-surface-variant">
-                      {new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                    </span>
-                  </td>
-                  <td className="px-8 py-5 text-right">
-                    <div className="flex items-center justify-end space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              </thead>
+              <tbody className="divide-y divide-surface-container/50">
+                {loading ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-16 text-center text-outline">
+                      <div className="flex items-center justify-center gap-2">
+                        <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        <span>Loading jobdesks...</span>
+                      </div>
+                    </td>
+                  </tr>
+                ) : paginatedJobdesks.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="px-8 py-16 text-center text-outline">
+                      No jobdesks found. Create one to get started.
+                    </td>
+                  </tr>
+                ) : paginatedJobdesks.map((job) => (
+                  <tr key={job.id} className="hover:bg-surface-container-low/30 transition-colors group">
+                    <td className="px-4 md:px-8 py-4 md:py-5">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-on-surface">{job.title}</span>
+                        <span className="text-[11px] text-outline font-medium mt-0.5 max-w-[200px] truncate">
+                          Email: {job.email_subject}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-4 md:px-8 py-4 md:py-5">
+                      <span className="text-sm text-on-surface-variant font-medium whitespace-nowrap">{job.department}</span>
+                    </td>
+                    <td className="px-4 md:px-8 py-4 md:py-5 text-center">
                       <button
                         onClick={() => navigate(`/recruitment/${job.id}`)}
-                        className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
-                        title="View Applicants"
+                        className="text-sm font-bold text-primary hover:underline underline-offset-4 whitespace-nowrap"
                       >
-                        <span className="material-symbols-outlined text-lg">visibility</span>
+                        {job.candidate_count || 0} candidates
                       </button>
-                      <button
-                        onClick={() => openEditModal(job)}
-                        className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
-                        title="Edit"
-                      >
-                        <span className="material-symbols-outlined text-lg">edit</span>
-                      </button>
-                      <button
-                        onClick={() => setDeleteId(job.id)}
-                        className="p-2 hover:bg-error/10 rounded-lg text-error transition-colors"
-                        title="Delete"
-                      >
-                        <span className="material-symbols-outlined text-lg">delete</span>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                    <td className="px-4 md:px-8 py-4 md:py-5">
+                      <StatusBadge status={job.status} />
+                    </td>
+                    <td className="px-4 md:px-8 py-4 md:py-5">
+                      <span className="text-sm text-on-surface-variant whitespace-nowrap">
+                        {new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                    </td>
+                    <td className="px-4 md:px-8 py-4 md:py-5 text-right">
+                      <div className="flex items-center justify-end space-x-1">
+                        <button
+                          onClick={() => navigate(`/recruitment/${job.id}`)}
+                          className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
+                          title="View Applicants"
+                        >
+                          <span className="material-symbols-outlined text-lg">visibility</span>
+                        </button>
+                        <button
+                          onClick={() => openEditModal(job)}
+                          className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
+                          title="Edit"
+                        >
+                          <span className="material-symbols-outlined text-lg">edit</span>
+                        </button>
+                        <button
+                          onClick={() => setDeleteId(job.id)}
+                          className="p-2 hover:bg-error/10 rounded-lg text-error transition-colors"
+                          title="Delete"
+                        >
+                          <span className="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
-          <div className="px-8 py-6 flex items-center justify-between bg-surface-container-low/20">
+          <div className="px-4 md:px-8 py-4 md:py-6 flex flex-wrap items-center justify-between gap-3 bg-surface-container-low/20">
             <span className="text-xs text-secondary font-medium">
               Showing {Math.min(paginatedJobdesks.length, ITEMS_PER_PAGE)} of {filteredJobdesks.length} job desks
             </span>
