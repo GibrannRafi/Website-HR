@@ -32,7 +32,7 @@ async function getHealthStatus() {
   try {
     const aiStart = Date.now();
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
     const res = await fetch(`${scorerUrl}/health`, { signal: controller.signal });
     clearTimeout(timeoutId);
 
