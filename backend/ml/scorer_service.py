@@ -61,20 +61,16 @@ def split_into_units(text):
     ]
 
 
-def get_semantic_insights(jd_text, cv_text):
-    jd_requirements = split_into_units(jd_text)
-    cv_units = split_into_units(cv_text)
+def get_semantic_insights_fast(jd_requirements, jd_embeddings, cv_text):
+    cv_units = split_into_units(cv_text)[:25]
 
-    if not jd_requirements or not cv_units:
+    if not jd_requirements or not cv_units or jd_embeddings is None:
         return []
-
-    jd_embeddings = model.encode(
-        jd_requirements,
-        normalize_embeddings=True
-    )
 
     cv_embeddings = model.encode(
         cv_units,
+        batch_size=32,
+        show_progress_bar=False,
         normalize_embeddings=True
     )
 
@@ -86,20 +82,14 @@ def get_semantic_insights(jd_text, cv_text):
     insights = []
 
     for i, requirement in enumerate(jd_requirements):
-
         best_index = similarity_matrix[i].argmax()
-        best_score = float(
-            similarity_matrix[i][best_index]
-        )
-
+        best_score = float(similarity_matrix[i][best_index])
         best_evidence = cv_units[best_index]
 
         if best_score >= 0.70:
             status = "matched"
-
         elif best_score >= 0.50:
             status = "partial"
-
         else:
             status = "missing"
 
@@ -115,6 +105,19 @@ def get_semantic_insights(jd_text, cv_text):
         })
 
     return insights
+
+
+def get_semantic_insights(jd_text, cv_text):
+    jd_requirements = split_into_units(jd_text)[:15]
+    if not jd_requirements:
+        return []
+    jd_embeddings = model.encode(
+        jd_requirements,
+        batch_size=32,
+        show_progress_bar=False,
+        normalize_embeddings=True
+    )
+    return get_semantic_insights_fast(jd_requirements, jd_embeddings, cv_text)
 
 app = Flask(__name__)
 
@@ -252,7 +255,19 @@ def score_batch():
     try:
         # Embed lowongan kerja sekali saja (Efisiensi Komputasi)
         clean_jd = preprocess_text_sbert(job_description)
-        vec_jd = model.encode([clean_jd])
+        vec_jd = model.encode([clean_jd], batch_size=32, show_progress_bar=False)
+
+        # Pre-encode requirements ONCE for the entire batch (Huge Performance Optimization)
+        jd_requirements = split_into_units(clean_jd)[:15]
+        if jd_requirements:
+            jd_req_embeddings = model.encode(
+                jd_requirements,
+                batch_size=32,
+                show_progress_bar=False,
+                normalize_embeddings=True
+            )
+        else:
+            jd_req_embeddings = None
 
         results = []
         for applicant in applicants:
@@ -263,9 +278,8 @@ def score_batch():
                 results.append({'id': aid, 'score': 0, 'label': 'Review Needed'})
                 continue
 
-            # Bersihkan dan hitung embedding CV pelamar
             clean_cv = preprocess_text_sbert(cv_text)
-            vec_cv = model.encode([clean_cv])
+            vec_cv = model.encode([clean_cv], batch_size=32, show_progress_bar=False)
 
             raw_score = float(cosine_similarity(vec_cv, vec_jd)[0][0])
             display_score = min(round(raw_score * 100, 2), 100.0)
@@ -277,9 +291,9 @@ def score_batch():
             else:
                 label = 'Tidak Cocok'   
 
-            # Dapatkan Insight
-            insights = get_semantic_insights(
-                clean_jd,
+            insights = get_semantic_insights_fast(
+                jd_requirements,
+                jd_req_embeddings,
                 clean_cv
             )
 
