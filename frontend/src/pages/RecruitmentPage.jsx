@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/common/DashboardLayout';
 import Modal from '../components/ui/Modal';
 import { StatusBadge } from '../components/ui/ScoreComponents';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
 
@@ -11,7 +12,6 @@ const EXPERIENCE = ['Junior', 'Mid-level', 'Senior', 'Lead'];
 
 const emptyForm = {
   title: '',
-  subject_keyword: '',
   department: 'Engineering',
   experience_level: 'Mid-level',
   description: '',
@@ -19,6 +19,9 @@ const emptyForm = {
 
 export default function RecruitmentPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const companyName = (user?.company || '').trim().toUpperCase() || 'PT ABC INDONESIA';
+
   const [jobdesks, setJobdesks] = useState([]);
   const [stats, setStats] = useState({ totalOpenings: 0, appConversion: 75, interviewCompletion: 50, avgTimeToHire: 18 });
   const [loading, setLoading] = useState(true);
@@ -50,10 +53,10 @@ export default function RecruitmentPage() {
     } catch {
       // Demo fallback
       setJobdesks([
-        { id: 1, title: 'Senior Product Designer', subject_keyword: 'PRODUCT DESIGNER', department: 'Creative Arts', experience_level: 'Senior', status: 'active', candidate_count: 14, created_at: '2023-10-12', email_subject: 'LAMARAN KERJA - PRODUCT DESIGNER' },
-        { id: 2, title: 'Cloud Infrastructure Lead', subject_keyword: 'CLOUD INFRASTRUCTURE', department: 'Engineering', experience_level: 'Lead', status: 'on hold', candidate_count: 5, created_at: '2023-11-04', email_subject: 'LAMARAN KERJA - CLOUD INFRASTRUCTURE' },
-        { id: 3, title: 'Lead Talent Sourcer', subject_keyword: 'TALENT SOURCER', department: 'Operations', experience_level: 'Senior', status: 'active', candidate_count: 10, created_at: '2023-11-18', email_subject: 'LAMARAN KERJA - TALENT SOURCER' },
-        { id: 4, title: 'Front End Developer', subject_keyword: 'FRONT END', department: 'Engineering', experience_level: 'Mid-level', status: 'active', candidate_count: 24, created_at: '2023-12-01', email_subject: 'LAMARAN KERJA - FRONT END' },
+        { id: 1, title: 'Senior Product Designer', subject_keyword: 'SENIOR PRODUCT DESIGNER', department: 'Creative Arts', experience_level: 'Senior', status: 'active', candidate_count: 14, created_at: '2023-10-12', email_subject: `LAMARAN KERJA - SENIOR PRODUCT DESIGNER - ${companyName}` },
+        { id: 2, title: 'Cloud Infrastructure Lead', subject_keyword: 'CLOUD INFRASTRUCTURE LEAD', department: 'Engineering', experience_level: 'Lead', status: 'on hold', candidate_count: 5, created_at: '2023-11-04', email_subject: `LAMARAN KERJA - CLOUD INFRASTRUCTURE LEAD - ${companyName}` },
+        { id: 3, title: 'Lead Talent Sourcer', subject_keyword: 'LEAD TALENT SOURCER', department: 'Operations', experience_level: 'Senior', status: 'active', candidate_count: 10, created_at: '2023-11-18', email_subject: `LAMARAN KERJA - LEAD TALENT SOURCER - ${companyName}` },
+        { id: 4, title: 'Front End Developer', subject_keyword: 'FRONT END DEVELOPER', department: 'Engineering', experience_level: 'Mid-level', status: 'active', candidate_count: 24, created_at: '2023-12-01', email_subject: `LAMARAN KERJA - FRONT END DEVELOPER - ${companyName}` },
       ]);
       setStats({ totalOpenings: 24, appConversion: 75, interviewCompletion: 50, avgTimeToHire: 18 });
     } finally {
@@ -79,7 +82,6 @@ export default function RecruitmentPage() {
   const openEditModal = (job) => {
     setForm({
       title: job.title,
-      subject_keyword: job.subject_keyword,
       department: job.department,
       experience_level: job.experience_level,
       description: job.description || '',
@@ -91,34 +93,23 @@ export default function RecruitmentPage() {
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
-    setForm(prev => {
-      const updated = { ...prev, [name]: value };
-      // Auto-generate subject_keyword from title
-      if (name === 'title') {
-        updated.subject_keyword = value.toUpperCase();
-      }
-      return updated;
-    });
+    setForm(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    if (!form.title || !form.subject_keyword || !form.department) {
-      toast.error('Please fill in all required fields');
+    if (!form.title || !form.department) {
+      toast.error('Please fill in required fields');
       return;
     }
     setSaving(true);
     try {
-      const payload = {
-        ...form,
-        email_subject: `LAMARAN KERJA - ${form.subject_keyword.trim().toUpperCase()}`,
-      };
       if (editMode) {
-        await api.put(`/jobdesks/${editId}`, payload);
+        await api.put(`/jobdesks/${editId}`, form);
         toast.success('Jobdesk updated successfully');
       } else {
-        await api.post('/jobdesks', payload);
-        toast.success('Jobdesk created! Email subject generated.');
+        await api.post('/jobdesks', form);
+        toast.success('Jobdesk created! Email subject generated automatically.');
       }
       setModalOpen(false);
       fetchJobdesks();
@@ -140,7 +131,9 @@ export default function RecruitmentPage() {
     }
   };
 
-  const previewEmailSubject = `LAMARAN KERJA - ${(form.subject_keyword || '').trim().toUpperCase() || '...'}`;
+  const previewEmailSubject = form.title.trim()
+    ? `LAMARAN KERJA - ${form.title.trim().toUpperCase()} - ${companyName}`
+    : `LAMARAN KERJA - {NAMA POSISI} - ${companyName}`;
 
   return (
     <DashboardLayout searchPlaceholder="Search job desks, candidates..." onSearch={setSearch}>
@@ -194,7 +187,7 @@ export default function RecruitmentPage() {
           </div>
         </div>
 
-        {/* Table */}
+        {/* Content Section: Desktop Table & Mobile Cards */}
         <div className="bg-surface-container-lowest rounded-2xl shadow-[0_20px_60px_rgba(42,52,57,0.04)] overflow-hidden">
           <div className="px-4 md:px-8 py-4 md:py-6 flex items-center justify-between border-b border-surface-container">
             <h3 className="text-base md:text-lg font-bold text-on-surface">Active Job Roles</h3>
@@ -210,8 +203,64 @@ export default function RecruitmentPage() {
             </div>
           </div>
 
-          {/* ── Horizontal scroll wrapper for table ── */}
-          <div className="overflow-x-auto w-full">
+          {/* ── Mobile View (Card Layout) ── */}
+          <div className="block md:hidden divide-y divide-surface-container/50">
+            {loading ? (
+              <div className="p-8 text-center text-outline flex items-center justify-center gap-2">
+                <span className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                <span>Loading jobdesks...</span>
+              </div>
+            ) : paginatedJobdesks.length === 0 ? (
+              <div className="p-8 text-center text-outline">
+                No jobdesks found. Create one to get started.
+              </div>
+            ) : (
+              paginatedJobdesks.map((job) => (
+                <div key={job.id} className="p-4 space-y-3 bg-surface-container-lowest hover:bg-surface-container-low/30 transition-colors">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-bold text-on-surface text-base">{job.title}</h4>
+                      <p className="text-xs text-secondary font-medium">{companyName}</p>
+                    </div>
+                    <StatusBadge status={job.status} />
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1">
+                    <button
+                      onClick={() => navigate(`/recruitment/${job.id}`)}
+                      className="inline-flex items-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3.5 py-2 rounded-xl text-xs transition-colors shadow-sm"
+                      title="Lihat Hasil Screening"
+                    >
+                      <span className="text-sm">👥</span>
+                      <span>{job.candidate_count || 0} Pelamar</span>
+                      <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+                    </button>
+                    <span className="text-[11px] text-on-surface-variant font-medium">
+                      {new Date(job.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-end gap-2 pt-2 border-t border-surface-container-low">
+                    <button
+                      onClick={() => openEditModal(job)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors"
+                    >
+                      <span>✏️</span> Edit
+                    </button>
+                    <button
+                      onClick={() => setDeleteId(job.id)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-error/10 hover:bg-error/20 text-error transition-colors"
+                    >
+                      <span>🗑️</span> Hapus
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          {/* ── Desktop View (Table Layout) ── */}
+          <div className="hidden md:block overflow-x-auto w-full">
             <table className="text-left border-collapse" style={{ minWidth: '640px', width: '100%' }}>
               <thead>
                 <tr className="bg-surface-container-low/50">
@@ -244,8 +293,8 @@ export default function RecruitmentPage() {
                     <td className="px-4 md:px-8 py-4 md:py-5">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-on-surface">{job.title}</span>
-                        <span className="text-[11px] text-outline font-medium mt-0.5 max-w-[200px] truncate">
-                          Email: {job.email_subject}
+                        <span className="text-[11px] text-outline font-medium mt-0.5 max-w-[280px] truncate" title={job.email_subject}>
+                          Email: {job.email_subject || `LAMARAN KERJA - ${job.title.toUpperCase()} - ${companyName}`}
                         </span>
                       </div>
                     </td>
@@ -255,9 +304,11 @@ export default function RecruitmentPage() {
                     <td className="px-4 md:px-8 py-4 md:py-5 text-center">
                       <button
                         onClick={() => navigate(`/recruitment/${job.id}`)}
-                        className="text-sm font-bold text-primary hover:underline underline-offset-4 whitespace-nowrap"
+                        className="inline-flex items-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold px-3 py-1.5 rounded-xl text-xs transition-all hover:scale-[1.02] active:scale-[0.98] shadow-sm whitespace-nowrap"
+                        title="Lihat Hasil Screening"
                       >
-                        {job.candidate_count || 0} candidates
+                        <span>👥</span>
+                        <span>{job.candidate_count || 0} Pelamar</span>
                       </button>
                     </td>
                     <td className="px-4 md:px-8 py-4 md:py-5">
@@ -271,23 +322,16 @@ export default function RecruitmentPage() {
                     <td className="px-4 md:px-8 py-4 md:py-5 text-right">
                       <div className="flex items-center justify-end space-x-1">
                         <button
-                          onClick={() => navigate(`/recruitment/${job.id}`)}
-                          className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
-                          title="View Applicants"
-                        >
-                          <span className="material-symbols-outlined text-lg">visibility</span>
-                        </button>
-                        <button
                           onClick={() => openEditModal(job)}
                           className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors"
-                          title="Edit"
+                          title="Edit Jobdesk"
                         >
                           <span className="material-symbols-outlined text-lg">edit</span>
                         </button>
                         <button
                           onClick={() => setDeleteId(job.id)}
                           className="p-2 hover:bg-error/10 rounded-lg text-error transition-colors"
-                          title="Delete"
+                          title="Delete Jobdesk"
                         >
                           <span className="material-symbols-outlined text-lg">delete</span>
                         </button>
@@ -363,34 +407,27 @@ export default function RecruitmentPage() {
               name="title"
               value={form.title}
               onChange={handleFormChange}
-              placeholder="e.g. Senior Software Engineer"
+              placeholder="e.g. Front End Developer"
               className="input-field"
             />
           </div>
 
-          {/* Subject Keyword */}
-          <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-              Email Subject Keyword <span className="text-error">*</span>
-            </label>
-            <input
-              name="subject_keyword"
-              value={form.subject_keyword}
-              onChange={handleFormChange}
-              placeholder="e.g. FRONT END"
-              className="input-field"
-            />
-            <div className="flex items-center gap-2 mt-1 p-3 bg-primary-container/20 rounded-lg">
-              <span className="material-symbols-outlined text-primary text-[16px]">mail</span>
-              <p className="text-xs text-on-surface-variant">
-                Email subject pelamar:{' '}
-                <strong className="text-on-surface font-bold">{previewEmailSubject}</strong>
-              </p>
+          {/* Email Subject Auto Preview (Read Only) */}
+          <div className="p-3.5 bg-primary-container/20 rounded-xl border border-primary/10 space-y-1">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
+              <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
+              <span>Otomatisasi Subject Email</span>
+            </div>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              Subject dibuat otomatis oleh sistem untuk pencocokan email pelamar via IMAP:
+            </p>
+            <div className="p-2.5 bg-white/80 rounded-lg text-xs font-mono font-bold text-on-surface break-all border border-outline-variant/20 shadow-sm mt-1">
+              {previewEmailSubject}
             </div>
           </div>
 
           {/* Department & Experience */}
-          <div className="grid grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-2">
               <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">Department</label>
               <select name="department" value={form.department} onChange={handleFormChange} className="input-field">
@@ -417,7 +454,6 @@ export default function RecruitmentPage() {
               placeholder="Define the core responsibilities, skills required, technologies, experience expected..."
               className="input-field h-32 resize-none"
             />
-           
           </div>
         </div>
       </Modal>

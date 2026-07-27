@@ -118,19 +118,27 @@ router.get('/:id/summary', auth, async (req, res) => {
 
 /**
  * POST /api/jobdesks
- * Create a new jobdesk
+ * Create a new jobdesk with automated Email Subject:
+ * LAMARAN KERJA - {NAMA POSISI} - {NAMA PERUSAHAAN}
  */
 router.post('/', auth, async (req, res) => {
-  const { title, subject_keyword, email_subject, department, experience_level, description } = req.body;
-  if (!title || !subject_keyword || !department) {
-    return res.status(400).json({ message: 'title, subject_keyword, and department are required' });
+  const { title, department, experience_level, description } = req.body;
+  if (!title || !department) {
+    return res.status(400).json({ message: 'title and department are required' });
   }
   try {
-    const finalEmailSubject = email_subject || `LAMARAN KERJA - ${subject_keyword.trim().toUpperCase()}`;
+    // Fetch HR user company
+    const [[user]] = await pool.query('SELECT company FROM users WHERE id = ?', [req.user.id]);
+    const companyName = (user?.company || '').trim().toUpperCase() || 'PT ABC INDONESIA';
+    
+    const cleanTitle = title.trim().toUpperCase();
+    const subjectKeyword = cleanTitle;
+    const emailSubject = `LAMARAN KERJA - ${cleanTitle} - ${companyName}`;
+
     const [result] = await pool.query(
       `INSERT INTO jobdesks (title, subject_keyword, email_subject, department, experience_level, description, status, created_by)
        VALUES (?, ?, ?, ?, ?, ?, 'active', ?)`,
-      [title, subject_keyword.toUpperCase(), finalEmailSubject, department, experience_level || 'Mid-level', description || '', req.user.id]
+      [title.trim(), subjectKeyword, emailSubject, department, experience_level || 'Mid-level', description || '', req.user.id]
     );
     const [[created]] = await pool.query('SELECT * FROM jobdesks WHERE id = ?', [result.insertId]);
     res.status(201).json(created);
@@ -144,17 +152,31 @@ router.post('/', auth, async (req, res) => {
  * Update a jobdesk
  */
 router.put('/:id', auth, async (req, res) => {
-  const { title, subject_keyword, email_subject, department, experience_level, description, status } = req.body;
+  const { title, department, experience_level, description, status } = req.body;
+  if (!title || !department) {
+    return res.status(400).json({ message: 'title and department are required' });
+  }
   try {
-    const finalEmailSubject = email_subject || `LAMARAN KERJA - ${(subject_keyword || '').trim().toUpperCase()}`;
+    // Fetch existing jobdesk to preserve or update email subject
+    const [[job]] = await pool.query('SELECT * FROM jobdesks WHERE id = ? AND created_by = ?', [req.params.id, req.user.id]);
+    if (!job) {
+      return res.status(403).json({ message: 'Access denied or Jobdesk not found' });
+    }
+
+    // Fetch HR user company
+    const [[user]] = await pool.query('SELECT company FROM users WHERE id = ?', [req.user.id]);
+    const companyName = (user?.company || '').trim().toUpperCase() || 'PT ABC INDONESIA';
+
+    const cleanTitle = title.trim().toUpperCase();
+    const subjectKeyword = cleanTitle;
+    const emailSubject = `LAMARAN KERJA - ${cleanTitle} - ${companyName}`;
+
     const [result] = await pool.query(
       `UPDATE jobdesks SET title=?, subject_keyword=?, email_subject=?, department=?, experience_level=?, description=?, status=?
        WHERE id = ? AND created_by = ?`,
-      [title, (subject_keyword||'').toUpperCase(), finalEmailSubject, department, experience_level, description, status || 'active', req.params.id, req.user.id]
+      [title.trim(), subjectKeyword, emailSubject, department, experience_level, description, status || 'active', req.params.id, req.user.id]
     );
-    if (result.affectedRows === 0) {
-      return res.status(403).json({ message: 'Access denied or Jobdesk not found' });
-    }
+
     const [[updated]] = await pool.query('SELECT * FROM jobdesks WHERE id = ?', [req.params.id]);
     res.json(updated);
   } catch (err) {

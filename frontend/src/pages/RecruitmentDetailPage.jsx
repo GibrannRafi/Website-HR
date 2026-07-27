@@ -134,18 +134,17 @@ export default function RecruitmentDetailPage() {
       <div className="px-4 sm:px-6 md:px-8 lg:px-12 pb-12 md:pb-20 pt-4 md:pt-6 space-y-6 md:space-y-8">
         {/* Breadcrumb + Header */}
         <section className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-          <div>
+          <div className="w-full md:w-auto">
             <nav className="flex items-center space-x-2 text-xs font-medium text-outline-variant mb-2 md:mb-3">
               <Link to="/recruitment" className="hover:text-primary transition-colors">Recruitment</Link>
               <span className="material-symbols-outlined text-[12px]">chevron_right</span>
               <span className="text-on-surface">{jobdesk?.title || 'Loading...'}</span>
             </nav>
-            <h2 className="text-2xl sm:text-4xl lg:text-[3.5rem] font-extrabold tracking-tight text-on-surface leading-tight">
-              {jobdesk?.title?.split(' ').slice(0, 2).join(' ') || '—'}
+            <h2 className="text-2xl sm:text-4xl lg:text-[3rem] font-extrabold tracking-tight text-on-surface leading-tight">
+              {jobdesk?.title || '—'}
             </h2>
-            <p className="text-on-surface-variant mt-2 md:mt-3 text-xs md:text-sm max-w-lg">
-              Reviewing {sortedApplicants.length} candidates • Email subject:{' '}
-              <span className="font-bold text-primary">{jobdesk?.email_subject}</span>
+            <p className="text-on-surface-variant mt-1 md:mt-2 text-xs md:text-sm">
+              Reviewing {sortedApplicants.length} candidates
             </p>
           </div>
           <div className="flex flex-wrap gap-2 md:space-x-3 w-full sm:w-auto">
@@ -166,6 +165,35 @@ export default function RecruitmentDetailPage() {
               Export List
             </button>
           </div>
+        </section>
+
+        {/* Email Subject Card (Read-Only Information) */}
+        <section className="bg-surface-container-lowest border border-primary/15 rounded-2xl p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-1 min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-lg">mail</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-primary">Subject Email Pelamar</span>
+              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-md uppercase">Read Only</span>
+            </div>
+            <p className="text-sm font-mono font-bold text-on-surface break-words tracking-tight">
+              {jobdesk?.email_subject || 'LAMARAN KERJA - POSISI - PERUSAHAAN'}
+            </p>
+            <p className="text-[11px] text-on-surface-variant">
+              Subject ini digunakan oleh backend untuk mencocokkan email lamaran kerja yang masuk via IMAP secara otomatis.
+            </p>
+          </div>
+          <button
+            onClick={() => {
+              if (jobdesk?.email_subject) {
+                navigator.clipboard.writeText(jobdesk.email_subject);
+                toast.success('Subject Email berhasil disalin!');
+              }
+            }}
+            className="flex-shrink-0 inline-flex items-center justify-center gap-2 bg-primary/10 hover:bg-primary/20 text-primary font-bold px-4 py-2.5 rounded-xl text-xs transition-colors self-start sm:self-center"
+          >
+            <span className="material-symbols-outlined text-[16px]">content_copy</span>
+            <span>Copy Subject</span>
+          </button>
         </section>
 
         {/* Insights Grid */}
