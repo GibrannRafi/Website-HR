@@ -173,7 +173,6 @@ export default function RecruitmentDetailPage() {
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-primary text-lg">mail</span>
               <span className="text-xs font-bold uppercase tracking-widest text-primary">Subject Email Pelamar</span>
-              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-md uppercase">Read Only</span>
             </div>
             <p className="text-sm font-mono font-bold text-on-surface break-words tracking-tight">
               {jobdesk?.email_subject || 'LAMARAN KERJA - POSISI - PERUSAHAAN'}

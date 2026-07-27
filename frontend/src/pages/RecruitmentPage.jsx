@@ -415,11 +415,10 @@ export default function RecruitmentPage() {
           {/* Email Subject Auto Preview (Read Only) */}
           <div className="p-3.5 bg-primary-container/20 rounded-xl border border-primary/10 space-y-1">
             <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
-              <span className="material-symbols-outlined text-[16px]">auto_awesome</span>
-              <span>Otomatisasi Subject Email</span>
+              <span>Subject Email</span>
             </div>
             <p className="text-xs text-on-surface-variant leading-relaxed">
-              Subject dibuat otomatis oleh sistem untuk pencocokan email pelamar via IMAP:
+              Subject Dibuat Otomatis dari sistem!
             </p>
             <div className="p-2.5 bg-white/80 rounded-lg text-xs font-mono font-bold text-on-surface break-all border border-outline-variant/20 shadow-sm mt-1">
               {previewEmailSubject}
