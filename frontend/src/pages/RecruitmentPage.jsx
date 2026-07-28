@@ -441,18 +441,41 @@ export default function RecruitmentPage() {
             </div>
           </div>
 
-          {/* Description */}
+          {/* Description & Parameters */}
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-              Job Description (used for AI scoring)
-            </label>
+            <div className="flex flex-wrap items-center justify-between gap-1">
+              <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">
+                Deskripsi & Parameter Lowongan Kerja
+              </label>
+              <span className="text-[11px] text-primary font-medium">
+                💡 Isi parameter lengkap agar penyeleksian optimal
+              </span>
+            </div>
             <textarea
               name="description"
               value={form.description}
               onChange={handleFormChange}
-              placeholder="Define the core responsibilities, skills required, technologies, experience expected..."
-              className="input-field h-32 resize-none"
+              placeholder="Contoh Parameter Terstruktur:&#10;• Skill Teknis: React.js, TypeScript, TailwindCSS, REST API&#10;• Pengalaman & Kualifikasi: Minimal 2 tahun pengalaman frontend, S1 Informatika&#10;• Tanggung Jawab: Mengembangkan antarmuka aplikasi web, integrasi API, responsive design..."
+              className="input-field h-36 resize-none leading-relaxed"
             />
+            <div className="flex flex-wrap gap-2 pt-1">
+              <span className="text-[10px] text-on-surface-variant font-bold">Panduan Parameter:</span>
+              <button
+                type="button"
+                onClick={() => {
+                  if (!form.description.includes('Skill Teknis:')) {
+                    setForm(prev => ({
+                      ...prev,
+                      description: (prev.description ? prev.description + '\n\n' : '') +
+                        '• Skill Teknis Wajib: \n• Pengalaman & Kualifikasi: \n• Tanggung Jawab Utama: '
+                    }));
+                  }
+                }}
+                className="text-[10px] font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-md transition-colors"
+              >
+                + Sisipkan Template Parameter
+              </button>
+            </div>
           </div>
         </div>
       </Modal>

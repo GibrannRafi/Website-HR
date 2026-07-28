@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import DashboardLayout from '../components/common/DashboardLayout';
 import { ScoreBar, ScoreCircle, StatusBadge } from '../components/ui/ScoreComponents';
@@ -7,6 +7,13 @@ import api from '../services/api';
 import toast from 'react-hot-toast';
 
 const SCREENING_STATUSES = ['Screening', 'Shortlisted', 'Technical Test', 'Final Interview', 'Hired', 'Rejected'];
+
+// Score threshold helper
+const getScoreCategory = (score) => {
+  if (score >= 75) return { label: 'Sangat Sesuai', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
+  if (score >= 50) return { label: 'Pertimbangan', color: 'bg-amber-100 text-amber-700 border-amber-200' };
+  return { label: 'Kurang Sesuai', color: 'bg-red-100 text-red-700 border-red-200' };
+};
 
 export default function RecruitmentDetailPage() {
   const { id } = useParams();
@@ -31,6 +38,43 @@ export default function RecruitmentDetailPage() {
   // Rescore
   const [rescoring, setRescoring] = useState(false);
 
+  // Desktop Notification
+  const [notifEnabled, setNotifEnabled] = useState(false);
+  const prevCountRef = useRef(null);
+
+  const requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
+      toast.error('Browser Anda tidak mendukung notifikasi desktop.');
+      return;
+    }
+    if (Notification.permission === 'granted') {
+      setNotifEnabled(true);
+      toast.success('Notifikasi Desktop sudah aktif! 🔔');
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    if (permission === 'granted') {
+      setNotifEnabled(true);
+      toast.success('Notifikasi Desktop berhasil diaktifkan! 🔔');
+      new Notification('HR System — Notifikasi Aktif', {
+        body: `Anda akan mendapat notifikasi saat ada pelamar baru untuk posisi ${jobdesk?.title || 'ini'}.`,
+        icon: '/vite.svg',
+      });
+    } else {
+      toast.error('Izin notifikasi ditolak. Mohon izinkan notifikasi di pengaturan browser.');
+    }
+  };
+
+  const fireNewApplicantNotification = (count, jobTitle) => {
+    if (Notification.permission === 'granted') {
+      new Notification(`📩 ${count} Pelamar Baru — ${jobTitle}`, {
+        body: `${count} CV baru telah masuk dan telah di-scoring menggunakan BERT. Cek dashboard segera!`,
+        icon: '/vite.svg',
+        tag: `new-applicant-${id}`,
+      });
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [id]);
@@ -44,7 +88,14 @@ export default function RecruitmentDetailPage() {
         api.get(`/jobdesks/${id}/summary`),
       ]);
       setJobdesk(jRes.data);
-      setApplicants(aRes.data);
+      // Check for new applicants & fire notification
+      const newApplicants = aRes.data;
+      if (prevCountRef.current !== null && newApplicants.length > prevCountRef.current) {
+        const newCount = newApplicants.length - prevCountRef.current;
+        fireNewApplicantNotification(newCount, jRes.data?.title || 'Posisi ini');
+      }
+      prevCountRef.current = newApplicants.length;
+      setApplicants(newApplicants);
       setSummary(sRes.data);
     } catch {
       // Demo data
@@ -76,10 +127,10 @@ export default function RecruitmentDetailPage() {
     setRescoring(true);
     try {
       await api.post(`/jobdesks/${id}/rescore`);
-      toast.success('Re-scoring complete! Scores updated.');
+      toast.success('Re-scoring BERT selesai! Skor diperbarui.');
       fetchData();
     } catch {
-      toast.error('Re-scoring failed. Please try again.');
+      toast.error('Re-scoring gagal. Silahkan coba lagi.');
     } finally {
       setRescoring(false);
     }
@@ -148,6 +199,23 @@ export default function RecruitmentDetailPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2 md:space-x-3 w-full sm:w-auto">
+            {/* Notification Bell Button */}
+            <button
+              onClick={requestNotificationPermission}
+              title={notifEnabled ? 'Notifikasi Desktop Aktif' : 'Aktifkan Notifikasi Desktop'}
+              className={`flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all min-h-[44px] border ${
+                notifEnabled || Notification.permission === 'granted'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:bg-emerald-100'
+                  : 'bg-surface-container-highest border-outline-variant text-on-surface hover:bg-surface-container'
+              }`}
+            >
+              <span className="material-symbols-outlined text-[18px]">
+                {notifEnabled || Notification.permission === 'granted' ? 'notifications_active' : 'notifications'}
+              </span>
+              <span className="hidden sm:inline">
+                {notifEnabled || Notification.permission === 'granted' ? 'Notifikasi ON' : 'Notifikasi'}
+              </span>
+            </button>
             <button
               onClick={handleRescore}
               disabled={rescoring}
@@ -211,9 +279,18 @@ export default function RecruitmentDetailPage() {
               <ScoreCircle score={summary.avgScore || 0} size={64} />
             </div>
             <p className="text-xs md:text-sm text-on-surface-variant leading-relaxed mt-4 md:mt-6">
-              The current pool represents active candidates scored by the TalentSift v2 AI engine using TF-IDF vectorization
-              and Cosine Similarity. Higher scores indicate stronger alignment with the job description.
+              Kandidat pada pool ini telah di-scoring oleh TalentSift v2 menggunakan <strong>BERT Embedding</strong> dan
+              <strong> Cosine Similarity</strong>. Skor lebih tinggi menunjukkan kesesuaian CV yang lebih kuat dengan deskripsi pekerjaan.
             </p>
+            {/* Score Guide Box */}
+            <div className="mt-4 p-4 bg-white/70 rounded-xl border border-outline-variant/20 space-y-2">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Panduan Interpretasi Skor</p>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 border border-emerald-200">✅ ≥ 75% — Sangat Sesuai</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700 border border-amber-200">⚠️ 50–74% — Pertimbangan</span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-100 text-red-700 border border-red-200">❌ &lt; 50% — Kurang Sesuai</span>
+              </div>
+            </div>
           </div>
 
           {/* Quick Summary */}
@@ -300,8 +377,18 @@ export default function RecruitmentDetailPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
-                        <ScoreBar score={applicant.match_score} />
+                      <td className="px-4 md:px-8 py-4 md:py-5">
+                        <div className="flex flex-col gap-1.5">
+                          <ScoreBar score={applicant.match_score} />
+                          {(() => {
+                            const cat = getScoreCategory(applicant.match_score);
+                            return (
+                              <span className={`inline-flex w-fit items-center px-2 py-0.5 rounded-full text-[10px] font-bold border ${cat.color}`}>
+                                {cat.label}
+                              </span>
+                            );
+                          })()}
+                        </div>
                       </td>
                       <td className="px-4 md:px-8 py-4 md:py-5 whitespace-nowrap">
                         <button
@@ -394,7 +481,7 @@ export default function RecruitmentDetailPage() {
               <div className="space-y-1.5 md:space-y-2">
                 <label className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Scoring Model</label>
                 <div className="p-3 md:p-4 bg-white rounded-lg border border-outline-variant/10 text-xs md:text-sm font-medium">
-                  model_talentsift_v2 (TF-IDF + Cosine)
+                  model_talentsift_v2 (BERT + Cosine Similarity)
                 </div>
               </div>
               <div className="space-y-1.5 md:space-y-2">
