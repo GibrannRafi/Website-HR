@@ -1,11 +1,11 @@
 /**
  * Email Poller — IMAP inbox monitor untuk lamaran kerja
  *
- * Filter ketat:
+ * Filter ketat & presisi per PT:
  * 1. Hanya email HARI INI yang belum dibaca
- * 2. Pre-filter subject: harus mengandung "LAMARAN KERJA - {KEYWORD}"
- * 3. Match dengan jobdesk aktif di database
- * 4. Parse CV → Score dengan TalentSift v2 → Simpan ke DB
+ * 2. Pre-filter subject: match dengan jobdesk aktif di database
+ *    (Mendukung pencocokan presisi NAMA PT + POSISI agar tidak tertukar antar HRD PT yang berbeda)
+ * 3. Parse CV (dengan 10s timeout pelindung) → Score dengan TalentSift v2 → Simpan ke DB
  */
 
 const Imap          = require('imap');
@@ -26,19 +26,40 @@ if (!fs.existsSync(ATTACHMENTS_DIR)) fs.mkdirSync(ATTACHMENTS_DIR, { recursive: 
 // Helpers
 // ─────────────────────────────────────────────
 
+/**
+ * Normalisasi string: hapus karakter non-alphanumeric untuk pencocokan fleksibel
+ * "LAMARAN KERJA - BACK END - PT ABC" -> "LAMARANKERJABACKENDPTABC"
+ */
+function normalizeStr(str) {
+  return (str || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
 async function getActiveEmailSubjects() {
-  const [rows] = await pool.query(
-    'SELECT id, email_subject, description, title FROM jobdesks WHERE status = "active"'
-  );
+  const [rows] = await pool.query(`
+    SELECT 
+      j.id, 
+      j.email_subject, 
+      j.subject_keyword, 
+      j.description, 
+      j.title,
+      u.company
+    FROM jobdesks j
+    LEFT JOIN users u ON j.created_by = u.id
+    WHERE j.status = "active"
+  `);
   return rows;
 }
 
 async function extractTextFromPDF(buffer) {
   try {
-    const data = await pdfParse(buffer);
-    return data.text;
+    const pdfPromise = pdfParse(buffer);
+    const timeoutPromise = new Promise((_, reject) =>
+      setTimeout(() => reject(new Error('PDF parse timeout (>10s)')), 10000)
+    );
+    const data = await Promise.race([pdfPromise, timeoutPromise]);
+    return data.text || '';
   } catch (err) {
-    console.error('PDF parse error:', err.message);
+    console.error('  ⚠️ PDF parse error:', err.message);
     return '';
   }
 }
@@ -63,28 +84,59 @@ function saveAttachment(buffer, filename) {
 // ─────────────────────────────────────────────
 
 async function processEmail(parsedEmail, activeJobdesks) {
-  const subject   = (parsedEmail.subject || '').toUpperCase().trim();
+  const subject   = (parsedEmail.subject || '').trim();
   const from      = parsedEmail.from?.value?.[0];
   const fromEmail = from?.address || '';
   const fromName  = from?.name || fromEmail.split('@')[0];
 
   console.log(`Processing: "${subject}" from ${fromEmail}`);
 
-  // Match subject ke jobdesk
-  const matchedJob = activeJobdesks.find(job =>
-    subject.includes(job.email_subject.toUpperCase())
-  );
-  if (!matchedJob) return null;
+  const normSubject = normalizeStr(subject);
 
-  console.log(`  Matched: "${matchedJob.title}"`);
+  // ── Peringkat Pencocokan (Prioritaskan pencocokan NAMA PT + POSISI) ──
+  let matchedJob = null;
 
-  // Skip jika sudah pernah diproses
+  // Priority 1: Match persis full email_subject (cth: "LAMARAN KERJA - BACK END - PT ABC")
+  matchedJob = activeJobdesks.find(job => {
+    const normJobSubject = normalizeStr(job.email_subject);
+    return normJobSubject && (normSubject.includes(normJobSubject) || normJobSubject.includes(normSubject));
+  });
+
+  // Priority 2: Match Posisi AND Nama PT (cth: subjek email punya kata "BACK END" DAN "PT ABC")
+  if (!matchedJob) {
+    matchedJob = activeJobdesks.find(job => {
+      const normKeyword = normalizeStr(job.subject_keyword || job.title);
+      const normCompany = normalizeStr(job.company);
+      if (normKeyword && normCompany) {
+        return normSubject.includes(normKeyword) && normSubject.includes(normCompany);
+      }
+      return false;
+    });
+  }
+
+  // Priority 3: Fallback ke match Posisi / Keyword saja (jika nama PT di subjek tidak ditulis pelamar)
+  if (!matchedJob) {
+    matchedJob = activeJobdesks.find(job => {
+      const normKeyword = normalizeStr(job.subject_keyword || job.title);
+      return normKeyword && normSubject.includes(normKeyword);
+    });
+  }
+
+  if (!matchedJob) {
+    const available = activeJobdesks.map(j => `${j.title} (${j.company || 'No Company'})`).join(', ');
+    console.log(`  Skipped: Subject "${subject}" does not match active jobdesks. (Active jobdesks: ${available})`);
+    return null;
+  }
+
+  console.log(`  ✅ Matched: "${matchedJob.title}" - ${matchedJob.company || 'N/A'} (Job ID: ${matchedJob.id})`);
+
+  // Skip jika pelamar & jobdesk ini sudah pernah diproses
   const [existing] = await pool.query(
     'SELECT id FROM applicants WHERE email = ? AND jobdesk_id = ?',
     [fromEmail, matchedJob.id]
   );
   if (existing.length > 0) {
-    console.log(`  Skipped (already processed): ${fromEmail}`);
+    console.log(`  Skipped (already processed): ${fromEmail} for job ID ${matchedJob.id}`);
     return null;
   }
 
@@ -97,12 +149,14 @@ async function processEmail(parsedEmail, activeJobdesks) {
     for (const att of parsedEmail.attachments) {
       const ext = path.extname(att.filename || '').toLowerCase();
       if (['.pdf', '.doc', '.docx', '.txt'].includes(ext)) {
+        console.log(`  Extracting CV attachment: ${att.filename}...`);
         const extracted = await extractCVText(att);
-        if (extracted.length > 50) {
+        if (extracted && extracted.length > 50) {
           cvText = extracted;
           const saved = saveAttachment(att.content, att.filename);
           cvPath     = saved.filePath;
           cvFilename = saved.safeName;
+          console.log(`  Extracted ${extracted.length} chars from ${att.filename}`);
           break;
         }
       }
@@ -114,6 +168,7 @@ async function processEmail(parsedEmail, activeJobdesks) {
   }
 
   // Score dengan TalentSift v2
+  console.log(`  Scoring CV with TalentSift v2...`);
   const scoreResult = await scoreCVAgainstJob(cvText, matchedJob.description || matchedJob.title);
   console.log(`  Score: ${scoreResult.score}% → ${scoreResult.label}`);
 
@@ -136,7 +191,7 @@ async function processEmail(parsedEmail, activeJobdesks) {
     ]
   );
 
-  console.log(`  Saved applicant: ${fromName} (ID: ${result.insertId})`);
+  console.log(`  🎉 Saved applicant: ${fromName} (ID: ${result.insertId}) for ${matchedJob.company || 'Job'} (${matchedJob.title})`);
   return result.insertId;
 }
 
@@ -191,8 +246,6 @@ function pollInbox() {
         return;
       }
 
-      const validKeywords = activeJobdesks.map(j => j.email_subject.toUpperCase());
-
       // Hanya email hari ini yang belum dibaca
       const today   = new Date();
       const dateStr = today.toLocaleDateString('en-US', {
@@ -208,7 +261,6 @@ function pollInbox() {
 
         console.log(`${results.length} unread email(s) today — processing...`);
 
-        // Single fetch: ambil semua, filter subject di dalam processEmail
         const fetch = imap.fetch(results, { bodies: '', markSeen: false });
 
         fetch.on('message', (msg) => {
@@ -218,16 +270,8 @@ function pollInbox() {
             stream.once('end', async () => {
               try {
                 const parsed = await simpleParser(Buffer.concat(chunks));
-                const subject = (parsed.subject || '').toUpperCase();
 
-                // Filter ketat: hanya proses jika ada keyword LAMARAN KERJA
-                const isMatch = validKeywords.some(kw => subject.includes(kw));
-                if (!isMatch) {
-                  console.log(`  Skip: "${parsed.subject}"`);
-                  return;
-                }
-
-                // Tandai sebagai sudah dibaca hanya jika memang lamaran
+                // Tandai sebagai SEEN
                 msg.once('attributes', (attrs) => {
                   imap.addFlags(attrs.uid, ['\\Seen'], () => {});
                 });
