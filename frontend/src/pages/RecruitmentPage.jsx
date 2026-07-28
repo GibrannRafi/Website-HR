@@ -14,7 +14,36 @@ const emptyForm = {
   title: '',
   department: 'Engineering',
   experience_level: 'Mid-level',
-  description: '',
+  skills: '',
+  experience: '',
+  responsibilities: '',
+};
+
+const parseDescriptionToFields = (desc = '') => {
+  const lines = desc.split('\n');
+  let skills = '', experience = '', responsibilities = '';
+  let current = '';
+  for (const line of lines) {
+    const lower = line.toLowerCase();
+    if (lower.includes('skill teknis') || lower.includes('skill wajib')) { current = 'skills'; continue; }
+    if (lower.includes('pengalaman') || lower.includes('kualifikasi')) { current = 'experience'; continue; }
+    if (lower.includes('tanggung jawab') || lower.includes('responsibilities')) { current = 'responsibilities'; continue; }
+    if (current === 'skills') skills += (skills ? '\n' : '') + line.trim();
+    else if (current === 'experience') experience += (experience ? '\n' : '') + line.trim();
+    else if (current === 'responsibilities') responsibilities += (responsibilities ? '\n' : '') + line.trim();
+    else skills += (skills ? '\n' : '') + line.trim(); // fallback
+  }
+  // If no sections found, put everything in skills as fallback
+  if (!skills && !experience && !responsibilities) skills = desc;
+  return { skills, experience, responsibilities };
+};
+
+const buildDescription = (skills, experience, responsibilities) => {
+  const parts = [];
+  if (skills.trim()) parts.push(`Skill Teknis Wajib:\n${skills.trim()}`);
+  if (experience.trim()) parts.push(`Pengalaman & Kualifikasi:\n${experience.trim()}`);
+  if (responsibilities.trim()) parts.push(`Tanggung Jawab:\n${responsibilities.trim()}`);
+  return parts.join('\n\n');
 };
 
 export default function RecruitmentPage() {
@@ -80,11 +109,14 @@ export default function RecruitmentPage() {
   };
 
   const openEditModal = (job) => {
+    const { skills, experience, responsibilities } = parseDescriptionToFields(job.description || '');
     setForm({
       title: job.title,
       department: job.department,
       experience_level: job.experience_level,
-      description: job.description || '',
+      skills,
+      experience,
+      responsibilities,
     });
     setEditMode(true);
     setEditId(job.id);
@@ -104,12 +136,18 @@ export default function RecruitmentPage() {
     }
     setSaving(true);
     try {
+      const payload = {
+        title: form.title,
+        department: form.department,
+        experience_level: form.experience_level,
+        description: buildDescription(form.skills, form.experience, form.responsibilities),
+      };
       if (editMode) {
-        await api.put(`/jobdesks/${editId}`, form);
-        toast.success('Jobdesk updated successfully');
+        await api.put(`/jobdesks/${editId}`, payload);
+        toast.success('Jobdesk berhasil diperbarui.');
       } else {
-        await api.post('/jobdesks', form);
-        toast.success('Jobdesk created! Email subject generated automatically.');
+        await api.post('/jobdesks', payload);
+        toast.success('Lowongan berhasil dibuat!');
       }
       setModalOpen(false);
       fetchJobdesks();
@@ -441,41 +479,40 @@ export default function RecruitmentPage() {
             </div>
           </div>
 
-          {/* Description & Parameters */}
+          {/* Skill Teknis */}
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center justify-between gap-1">
-              <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">
-                Deskripsi & Parameter Lowongan Kerja
-              </label>
-              <span className="text-[11px] text-primary font-medium">
-                💡 Isi parameter lengkap agar penyeleksian optimal
-              </span>
-            </div>
+            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">Skill Teknis</label>
             <textarea
-              name="description"
-              value={form.description}
+              name="skills"
+              value={form.skills}
               onChange={handleFormChange}
-              placeholder="Contoh Parameter Terstruktur:&#10;• Skill Teknis: React.js, TypeScript, TailwindCSS, REST API&#10;• Pengalaman & Kualifikasi: Minimal 2 tahun pengalaman frontend, S1 Informatika&#10;• Tanggung Jawab: Mengembangkan antarmuka aplikasi web, integrasi API, responsive design..."
-              className="input-field h-36 resize-none leading-relaxed"
+              placeholder="Contoh: React.js, TypeScript, Node.js, REST API, PostgreSQL..."
+              className="input-field h-20 resize-none"
             />
-            <div className="flex flex-wrap gap-2 pt-1">
-              <span className="text-[10px] text-on-surface-variant font-bold">Panduan Parameter:</span>
-              <button
-                type="button"
-                onClick={() => {
-                  if (!form.description.includes('Skill Teknis:')) {
-                    setForm(prev => ({
-                      ...prev,
-                      description: (prev.description ? prev.description + '\n\n' : '') +
-                        '• Skill Teknis Wajib: \n• Pengalaman & Kualifikasi: \n• Tanggung Jawab Utama: '
-                    }));
-                  }
-                }}
-                className="text-[10px] font-semibold text-primary bg-primary/10 hover:bg-primary/20 px-2.5 py-1 rounded-md transition-colors"
-              >
-                + Sisipkan Template Parameter
-              </button>
-            </div>
+          </div>
+
+          {/* Pengalaman */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">Pengalaman & Kualifikasi</label>
+            <textarea
+              name="experience"
+              value={form.experience}
+              onChange={handleFormChange}
+              placeholder="Contoh: Min. 2 tahun pengalaman, S1 Informatika / Teknik Komputer..."
+              className="input-field h-20 resize-none"
+            />
+          </div>
+
+          {/* Tanggung Jawab */}
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-secondary">Tanggung Jawab</label>
+            <textarea
+              name="responsibilities"
+              value={form.responsibilities}
+              onChange={handleFormChange}
+              placeholder="Contoh: Mengembangkan fitur frontend, integrasi API, code review..."
+              className="input-field h-20 resize-none"
+            />
           </div>
         </div>
       </Modal>
