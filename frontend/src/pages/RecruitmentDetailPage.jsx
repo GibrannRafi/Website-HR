@@ -588,48 +588,58 @@ export default function RecruitmentDetailPage() {
               </div>
             )}
 
-            {/* AI Insights: Keywords */}
+            {/* AI Insights: Side-by-Side Comparison Table */}
             {cvApplicant?.requirement_analysis?.length > 0 && (
               <div className="mt-5 pt-4 border-t border-outline-variant/20">
-                <p className="text-xs font-bold uppercase tracking-widest text-outline-variant mb-3">
-                  AI Requirement Analysis
-                </p>
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-bold uppercase tracking-widest text-outline-variant">
+                    Analisis Perbandingan Keahlian (Jobdesk vs CV Pelamar)
+                  </p>
+                  <span className="text-[11px] font-medium text-primary bg-primary/10 px-2.5 py-0.5 rounded-full">
+                    BERT Semantic Matching
+                  </span>
+                </div>
 
-                <div className="space-y-3">
-                  {cvApplicant.requirement_analysis.map((item, index) => (
-                    <div
-                      key={index}
-                      className="p-3 bg-white rounded-lg border border-outline-variant/10"
-                    >
-                      <div className="flex justify-between items-start gap-3">
-                        <p className="text-xs font-semibold text-on-surface">
-                          {item.requirement}
-                        </p>
-                      </div>
-
-                      <div className="mt-3 flex justify-between items-center bg-surface-container/50 px-3 py-2 rounded-md">
-                        <p className={`text-[11px] font-bold uppercase tracking-wider ${
-                          item.status === 'matched' ? 'text-primary' :
-                          item.status === 'partial' ? 'text-secondary' : 'text-error'
-                        }`}>
-                          {item.status === 'matched' ? '✓ MATCHED' :
-                           item.status === 'partial' ? '⚠ PARTIAL MATCH' : '✕ MISSING'}
-                        </p>
-                        <span className="text-sm font-bold text-on-surface-variant">
-                          {item.similarity}%
-                        </span>
-                      </div>
-
-                      <div className="mt-3">
-                        <p className="text-[10px] font-bold text-outline-variant uppercase tracking-widest">
-                          CV EVIDENCE
-                        </p>
-                        <p className="text-xs text-on-surface-variant mt-1 italic">
-                          {item.cv_evidence ? `“${item.cv_evidence}”` : 'No relevant evidence found in the CV.'}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                <div className="overflow-x-auto rounded-lg border border-outline-variant/20">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="bg-surface-container-high/60 text-outline-variant font-bold text-[10px] uppercase tracking-wider border-b border-outline-variant/20">
+                        <th className="p-3 w-5/12">Kualifikasi Dibutuhkan (Jobdesk)</th>
+                        <th className="p-3 w-4/12">Keahlian Ditemukan pada CV</th>
+                        <th className="p-3 w-3/12 text-center">Status & Relevansi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-outline-variant/15 bg-white">
+                      {cvApplicant.requirement_analysis.map((item, index) => (
+                        <tr key={index} className="hover:bg-surface-container-low/40 transition-colors">
+                          <td className="p-3 font-semibold text-on-surface align-top">
+                            {item.requirement}
+                          </td>
+                          <td className="p-3 text-on-surface-variant italic leading-relaxed align-top">
+                            {item.cv_evidence ? (
+                              <span className="not-italic text-on-surface">“{item.cv_evidence}”</span>
+                            ) : (
+                              <span className="text-error/70">✕ Tidak ditemukan keahlian relevan di CV</span>
+                            )}
+                          </td>
+                          <td className="p-3 text-center align-top whitespace-nowrap">
+                            <div className="flex flex-col items-center gap-1">
+                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                                item.status === 'matched' ? 'bg-primary/15 text-primary' :
+                                item.status === 'partial' ? 'bg-amber-500/15 text-amber-700' : 'bg-error/15 text-error'
+                              }`}>
+                                {item.status === 'matched' ? '✓ Relevan (Cocok)' :
+                                 item.status === 'partial' ? '⚠ Sebagian' : '✕ Tidak Relevan'}
+                              </span>
+                              <span className="text-[11px] font-bold text-on-surface-variant">
+                                {item.similarity}% Match
+                              </span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
