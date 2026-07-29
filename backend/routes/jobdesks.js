@@ -219,11 +219,19 @@ router.post('/:id/rescore', auth, async (req, res) => {
 
     const scored = await batchScore(applicants, job.description || job.title);
 
-    // Update scores
+    // Update scores with safe status mapping for MySQL ENUM
     for (const s of scored) {
+      // Map AI labels to valid MySQL screening_status ENUM values
+      let validStatus = 'Screening';
+      if (s.label === 'Tidak Cocok' || s.label === 'Kurang Cocok' || s.label === 'Review Needed') {
+        validStatus = 'Review Needed';
+      } else if (s.label === 'Lolos' || s.label === 'Rekomendasi') {
+        validStatus = 'Screening';
+      }
+
       await pool.query(
         'UPDATE applicants SET match_score = ?, screening_status = ?, requirement_analysis = ?, insight_summary = ? WHERE id = ?',
-        [s.score, s.label, JSON.stringify(s.requirement_analysis || []), JSON.stringify(s.insight_summary || null), s.id]
+        [s.score, validStatus, JSON.stringify(s.requirement_analysis || []), JSON.stringify(s.insight_summary || null), s.id]
       );
     }
 
