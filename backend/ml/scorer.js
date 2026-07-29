@@ -48,7 +48,7 @@ function postToScorer(endpoint, payload) {
       reject(new Error(`Scorer service unreachable: ${err.message}. Pastikan scorer_service.py berjalan.`));
     });
 
-    req.setTimeout(60000, () => {
+    req.setTimeout(180000, () => {
       req.destroy();
       reject(new Error('Scorer service timeout'));
     });
