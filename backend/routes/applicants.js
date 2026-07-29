@@ -116,4 +116,20 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
+/**
+ * POST /api/applicants/sync-email
+ * Trigger manual sync email IMAP inbox
+ */
+router.post('/sync-email', auth, async (req, res) => {
+  try {
+    const { pollInbox } = require('../services/emailPoller');
+    // Run pollInbox asynchronously
+    pollInbox();
+    res.json({ message: 'Pemeriksaan email masuk sedang berjalan di background' });
+  } catch (err) {
+    console.error('Manual sync email error:', err.message);
+    res.status(500).json({ message: 'Gagal melakukan sync email', error: err.message });
+  }
+});
+
 module.exports = router;

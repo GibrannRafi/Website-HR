@@ -37,6 +37,22 @@ export default function RecruitmentDetailPage() {
 
   // Rescore
   const [rescoring, setRescoring] = useState(false);
+  const [syncingEmail, setSyncingEmail] = useState(false);
+
+  const handleSyncEmail = async () => {
+    setSyncingEmail(true);
+    try {
+      await api.post('/applicants/sync-email');
+      toast.success('Pemeriksaan email masuk sedang berjalan! Halaman akan diperbarui.');
+      setTimeout(() => {
+        fetchData();
+      }, 3000);
+    } catch {
+      toast.error('Gagal mengecek email masuk.');
+    } finally {
+      setSyncingEmail(false);
+    }
+  };
 
   // Desktop Notification
   const [notifEnabled, setNotifEnabled] = useState(false);
@@ -199,6 +215,20 @@ export default function RecruitmentDetailPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2 md:space-x-3 w-full sm:w-auto">
+            {/* Sync Email Button */}
+            <button
+              onClick={handleSyncEmail}
+              disabled={syncingEmail}
+              title="Cek & Tarik Email Lamaran Masuk Sekarang (IMAP)"
+              className="flex-shrink-0 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold transition-all min-h-[44px] border bg-primary/10 border-primary/20 text-primary hover:bg-primary/20 active:scale-[0.98]"
+            >
+              {syncingEmail ? (
+                <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <span className="material-symbols-outlined text-[18px]">sync</span>
+              )}
+              <span>Cek Email Masuk</span>
+            </button>
             {/* Notification Bell Button */}
             <button
               onClick={requestNotificationPermission}
