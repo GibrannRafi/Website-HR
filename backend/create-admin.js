@@ -4,13 +4,18 @@ const pool = require('./config/db');
 
 async function createAdmin() {
   try {
-    // First ensure role column exists
-    await pool.query(`
-      ALTER TABLE users 
-      ADD COLUMN IF NOT EXISTS role ENUM('admin', 'hr', 'inactive') NOT NULL DEFAULT 'hr' 
-      AFTER company
-    `);
-    console.log('✅ Role column ready');
+    // Check if role column exists first (MySQL < 8 doesn't support IF NOT EXISTS for columns)
+    const [cols] = await pool.query(
+      "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'users' AND COLUMN_NAME = 'role'"
+    );
+    if (cols.length === 0) {
+      await pool.query(
+        "ALTER TABLE users ADD COLUMN role ENUM('admin', 'hr', 'inactive') NOT NULL DEFAULT 'hr' AFTER company"
+      );
+      console.log('✅ Role column added');
+    } else {
+      console.log('✅ Role column already exists');
+    }
 
     const email = 'admin@portalhr.com';
     const password = 'Admin@1234';
