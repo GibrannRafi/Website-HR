@@ -341,6 +341,107 @@ export default function RecruitmentDetailPage() {
           </div>
         </section>
 
+        {/* Evaluation Metrics Section */}
+        {summary.metrics && summary.metrics.totalApplicants > 0 && (
+          <section className="bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(15,23,42,0.04)] overflow-hidden">
+            <div className="px-5 md:px-8 py-4 md:py-5 border-b border-surface-container-high flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[20px]">analytics</span>
+                <h3 className="font-bold text-sm md:text-base">Evaluasi Model — Precision, Recall, F1-Score &amp; MRR</h3>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-outline-variant bg-surface-container px-3 py-1 rounded-full">
+                Threshold ≥ {summary.metrics.threshold}% = Relevan
+              </span>
+            </div>
+            <div className="p-5 md:p-8">
+              {/* Metrics Cards Row */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6">
+                {[
+                  {
+                    label: 'Precision',
+                    value: `${summary.metrics.precision}%`,
+                    icon: 'target',
+                    desc: 'Dari kandidat yg direkomendasikan sistem, berapa % yg benar layak',
+                    color: 'text-primary bg-primary/10 border-primary/20',
+                  },
+                  {
+                    label: 'Recall',
+                    value: `${summary.metrics.recall}%`,
+                    icon: 'saved_search',
+                    desc: 'Dari seluruh kandidat layak, berapa % yg berhasil ditemukan sistem',
+                    color: 'text-tertiary bg-tertiary/10 border-tertiary/20',
+                  },
+                  {
+                    label: 'F1-Score',
+                    value: `${summary.metrics.f1Score}%`,
+                    icon: 'balance',
+                    desc: 'Rata-rata harmonik antara Precision dan Recall',
+                    color: 'text-secondary bg-secondary/10 border-secondary/20',
+                  },
+                  {
+                    label: 'MRR',
+                    value: summary.metrics.mrr.toFixed(3),
+                    icon: 'military_tech',
+                    desc: 'Mean Reciprocal Rank — seberapa tinggi kandidat terbaik HR muncul di ranking sistem',
+                    color: 'text-emerald-700 bg-emerald-50 border-emerald-200',
+                  },
+                ].map((m) => (
+                  <div key={m.label} className={`rounded-xl border p-4 md:p-5 flex flex-col gap-2 ${m.color}`}>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-widest opacity-70">{m.label}</span>
+                      <span className="material-symbols-outlined text-[18px] opacity-60">{m.icon}</span>
+                    </div>
+                    <p className="text-2xl md:text-3xl font-bold">{m.value}</p>
+                    <p className="text-[10px] leading-relaxed opacity-70">{m.desc}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Confusion Matrix Mini */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+                <div className="bg-surface-container rounded-xl p-4 space-y-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Confusion Matrix (Biner)</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs font-medium">
+                    <div className="bg-primary/10 text-primary rounded-lg p-3 text-center">
+                      <p className="text-xl font-bold">{summary.metrics.tp}</p>
+                      <p className="text-[10px] opacity-70">True Positive</p>
+                    </div>
+                    <div className="bg-error/10 text-error rounded-lg p-3 text-center">
+                      <p className="text-xl font-bold">{summary.metrics.fp}</p>
+                      <p className="text-[10px] opacity-70">False Positive</p>
+                    </div>
+                    <div className="bg-amber-500/10 text-amber-700 rounded-lg p-3 text-center">
+                      <p className="text-xl font-bold">{summary.metrics.fn}</p>
+                      <p className="text-[10px] opacity-70">False Negative</p>
+                    </div>
+                    <div className="bg-surface-container-high text-on-surface-variant rounded-lg p-3 text-center">
+                      <p className="text-xl font-bold">{summary.metrics.totalApplicants - summary.metrics.tp - summary.metrics.fp - summary.metrics.fn}</p>
+                      <p className="text-[10px] opacity-70">True Negative</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-surface-container rounded-xl p-4 space-y-3">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-outline-variant">Keterangan Evaluasi</p>
+                  <div className="space-y-2 text-xs text-on-surface-variant">
+                    <p>📌 <strong>Ground Truth Relevan</strong>: Kandidat dengan status <span className="font-mono bg-primary/10 text-primary px-1 rounded">Shortlisted / Technical Test / Final Interview / Hired</span></p>
+                    <p>📌 <strong>Prediksi Relevan Sistem</strong>: Kandidat dengan Match Score ≥ <strong>{summary.metrics.threshold}%</strong></p>
+                    <p>📊 Total kandidat dianalisis: <strong>{summary.metrics.totalApplicants} pelamar</strong></p>
+                  </div>
+                  <div className="mt-2 pt-3 border-t border-outline-variant/10">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-outline-variant mb-1">Catatan</p>
+                    <p className="text-[10px] text-on-surface-variant leading-relaxed">
+                      Metrik akan terus diperbarui secara otomatis seiring bertambahnya data pelamar dan perubahan status HR.
+                      {summary.metrics.tp === 0 && summary.metrics.fp === 0 && (
+                        <span className="block mt-1 text-amber-700">⚠️ Belum ada kandidat yang diloloskan HR (Shortlisted/dst). Update status kandidat untuk melihat metrik.</span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Applicants Table */}
         <section className="bg-surface-container-lowest rounded-xl shadow-[0_20px_40px_rgba(15,23,42,0.04)] overflow-hidden">
           <div className="px-4 md:px-8 py-4 md:py-6 border-b border-surface-container-high flex flex-wrap justify-between items-center gap-3">

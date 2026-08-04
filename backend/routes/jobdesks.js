@@ -105,11 +105,60 @@ router.get('/:id/summary', auth, async (req, res) => {
       [req.params.id]
     );
 
+    // ─────────────────────────────────────────────
+    // Hitung Precision, Recall, F1-Score, MRR
+    // Ground Truth Relevan = status HR: Shortlisted/Technical Test/Final Interview/Hired
+    // Prediksi Relevan Sistem = match_score >= 50
+    // ─────────────────────────────────────────────
+    const [allApplicants] = await pool.query(
+      'SELECT id, match_score, screening_status FROM applicants WHERE jobdesk_id = ? ORDER BY match_score DESC',
+      [req.params.id]
+    );
+
+    const HR_RELEVANT_STATUSES = ['Shortlisted', 'Technical Test', 'Final Interview', 'Hired'];
+    const SCORE_THRESHOLD = 50; // threshold sistem >= 50% dianggap relevan
+
+    let TP = 0, FP = 0, FN = 0;
+    let mrrSum = 0;
+    let reciprocalFound = false;
+
+    allApplicants.forEach((a, index) => {
+      const systemSaysRelevant = (a.match_score || 0) >= SCORE_THRESHOLD;
+      const hrSaysRelevant     = HR_RELEVANT_STATUSES.includes(a.screening_status);
+
+      if (systemSaysRelevant && hrSaysRelevant)  TP++;
+      if (systemSaysRelevant && !hrSaysRelevant) FP++;
+      if (!systemSaysRelevant && hrSaysRelevant) FN++;
+
+      // MRR: cari rank pertama kandidat yang diloloskan HR
+      if (hrSaysRelevant && !reciprocalFound) {
+        mrrSum = 1 / (index + 1);
+        reciprocalFound = true;
+      }
+    });
+
+    const precision = (TP + FP) > 0 ? TP / (TP + FP) : 0;
+    const recall    = (TP + FN) > 0 ? TP / (TP + FN) : 0;
+    const f1        = (precision + recall) > 0
+      ? (2 * precision * recall) / (precision + recall)
+      : 0;
+    const mrr = reciprocalFound ? mrrSum : 0;
+
     res.json({
       inScreening: inScreening.total,
       interviewed: interviewed.total,
       onHold: onHold.total,
       avgScore: Math.round((avgScore.avg || 0) * 10) / 10,
+      // Evaluation Metrics
+      metrics: {
+        precision: Math.round(precision * 1000) / 10,  // persentase 1 desimal
+        recall:    Math.round(recall    * 1000) / 10,
+        f1Score:   Math.round(f1        * 1000) / 10,
+        mrr:       Math.round(mrr       * 1000) / 1000, // 3 desimal
+        tp: TP, fp: FP, fn: FN,
+        totalApplicants: allApplicants.length,
+        threshold: SCORE_THRESHOLD,
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

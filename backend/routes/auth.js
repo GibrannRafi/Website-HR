@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
 
   try {
     const [users] = await pool.query(
-      'SELECT id, name, email, password, company FROM users WHERE email = ?',
+      'SELECT id, name, email, password, company, role FROM users WHERE email = ?',
       [email]
     );
 
@@ -75,7 +75,7 @@ router.post('/login', async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -87,6 +87,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         company: user.company,
+        role: user.role,
       },
     });
   } catch (err) {

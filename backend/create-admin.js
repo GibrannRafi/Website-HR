@@ -1,37 +1,40 @@
-/**
- * Script sekali jalan: buat user HR demo
- * Jalankan: node create-admin.js
- */
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const pool = require('./config/db');
 
 async function createAdmin() {
   try {
-    // Cek apakah user sudah ada
-    const [existing] = await pool.query('SELECT id, email FROM users');
-    console.log('Users yang ada di DB:', existing);
+    // First ensure role column exists
+    await pool.query(`
+      ALTER TABLE users 
+      ADD COLUMN IF NOT EXISTS role ENUM('admin', 'hr', 'inactive') NOT NULL DEFAULT 'hr' 
+      AFTER company
+    `);
+    console.log('✅ Role column ready');
 
-    // Hash password baru
-    const password = 'admin123';
+    const email = 'admin@portalhr.com';
+    const password = 'Admin@1234';
     const hashed = await bcrypt.hash(password, 10);
-    console.log('Hash baru:', hashed);
 
-    // Insert / update admin
-    const [result] = await pool.query(`
-      INSERT INTO users (name, email, password, company)
-      VALUES (?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE password = VALUES(password)
-    `, ['HR Admin', 'admin@atelier.hr', hashed, 'Atelier HR']);
+    // Check if admin exists
+    const [existing] = await pool.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
+      // Update existing to admin
+      await pool.query("UPDATE users SET role = 'admin', password = ? WHERE email = ?", [hashed, email]);
+      console.log('✅ Admin account updated!');
+    } else {
+      await pool.query(
+        "INSERT INTO users (name, email, password, company, role) VALUES (?, ?, ?, ?, 'admin')",
+        ['Administrator', email, hashed, 'Portal HR System']
+      );
+      console.log('✅ Admin account created!');
+    }
 
-    console.log('');
-    console.log('=== BERHASIL ===');
-    console.log('Email   : admin@atelier.hr');
-    console.log('Password: admin123');
-    console.log('================');
+    console.log(`📧 Email   : ${email}`);
+    console.log(`🔑 Password: ${password}`);
     process.exit(0);
   } catch (err) {
-    console.error('Error:', err.message);
+    console.error('❌ Error:', err.message);
     process.exit(1);
   }
 }

@@ -67,6 +67,7 @@ app.use('/api/auth', authLimiter, require('./routes/auth'));
 app.use('/api/dashboard', require('./routes/dashboard'));
 app.use('/api/jobdesks', require('./routes/jobdesks'));
 app.use('/api/applicants', require('./routes/applicants'));
+app.use('/api/admin', require('./routes/admin'));
 
 // Comprehensive Health check endpoint
 app.get('/api/health', async (req, res) => {

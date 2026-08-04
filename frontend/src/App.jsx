@@ -10,6 +10,8 @@ import RegisterPage from './pages/RegisterPage';
 import DashboardHRPage from './pages/DashboardHRPage';
 import RecruitmentPage from './pages/RecruitmentPage';
 import RecruitmentDetailPage from './pages/RecruitmentDetailPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import AdminUsersPage from './pages/AdminUsersPage';
 
 export default function App() {
   return (
@@ -69,6 +71,10 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Admin routes */}
+          <Route path="/admin/dashboard" element={<ProtectedRoute><AdminDashboardPage /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute><AdminUsersPage /></ProtectedRoute>} />
 
           {/* Placeholder routes */}
           <Route path="/directory" element={<ProtectedRoute><PlaceholderPage title="Directory" icon="group" /></ProtectedRoute>} />
