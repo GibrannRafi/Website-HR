@@ -54,11 +54,19 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  try {
-    const [users] = await pool.query(
-      'SELECT id, name, email, password, company, role FROM users WHERE email = ?',
-      [email]
-    );
+    let users;
+    try {
+      [users] = await pool.query(
+        'SELECT id, name, email, password, company, role FROM users WHERE email = ?',
+        [email]
+      );
+    } catch (err) {
+      // Fallback for production DB if 'role' column is not yet migrated
+      [users] = await pool.query(
+        'SELECT id, name, email, password, company FROM users WHERE email = ?',
+        [email]
+      );
+    }
 
     if (users.length === 0) {
       return res.status(401).json({ message: 'Invalid email or password' });
@@ -74,8 +82,10 @@ router.post('/login', async (req, res) => {
       throw new Error('JWT_SECRET environment variable is not configured');
     }
 
+    const userRole = user.role || 'hr';
+
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
+      { id: user.id, email: user.email, role: userRole },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -87,7 +97,7 @@ router.post('/login', async (req, res) => {
         name: user.name,
         email: user.email,
         company: user.company,
-        role: user.role,
+        role: userRole,
       },
     });
   } catch (err) {
