@@ -13,6 +13,9 @@ const { getHealthStatus } = require('./services/healthCheck');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Trust proxy for reverse proxy platforms (Railway, Vercel, Heroku, etc.)
+app.set('trust proxy', 1);
+
 // ============================================================
 // Logging & Middleware
 // ============================================================
