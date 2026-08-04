@@ -54,6 +54,7 @@ router.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
+  try {
     let users;
     try {
       [users] = await pool.query(
